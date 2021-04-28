@@ -1,22 +1,19 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-
+import { useState } from 'react'
 import './App.css';
 import Dashboard from './Dashboard';
-import Login from './Login';
-import Preferences from './Preferences';
-import useToken from './useToken'
+import Header from './Header';
 
 function App() {
-  const { token, setToken } = useToken();
+  const [headerState, setHeaderState] = useState('start');
 
-  if(!token) {
-    return <Login setToken={setToken} />
+  let toLogin = () => {
+    setHeaderState('loginClicked');
   }
 
   return (
-    <div className="wrapper">
-      <Dashboard></Dashboard>
+    <div className = "wrapper">
+      <Header toLogin = {toLogin} headerState = {headerState}></Header>
+      {headerState == 'start' && <Dashboard></Dashboard>}
     </div>
   );
 }
