@@ -1,9 +1,12 @@
 import { useState } from 'react'
+import useToken from './useToken';
 import './App.css';
 import Dashboard from './Dashboard';
 import Header from './Header';
+import Login from './Login';
 
 function App() {
+  const { token, setToken } = useToken();
   const [headerState, setHeaderState] = useState('start');
 
   let toLogin = () => {
@@ -12,8 +15,9 @@ function App() {
 
   return (
     <div className = "wrapper">
-      <Header toLogin = {toLogin} headerState = {headerState}></Header>
-      {headerState == 'start' && <Dashboard></Dashboard>}
+      <Header toLogin = {toLogin} headerState = {headerState} token = {token}></Header>
+      {headerState === 'start' && <Dashboard></Dashboard>}
+      {headerState === 'loginClicked' && <Login setToken={setToken}></Login>}
     </div>
   );
 }

@@ -1,0 +1,23 @@
+section#About > .wrapper {
+    height: 100%;
+    width: 100%;
+}
+
+section#About > .wrapper > h2 {
+    font-size: 2.5em;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+section#About > .wrapper > p {
+    font-size: 1.2em;
+}
+
+section#About > .wrapper > p#motto {
+    font-size: 1.5em;
+    font-style: italic;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
