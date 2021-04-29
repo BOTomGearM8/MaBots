@@ -27,7 +27,7 @@ export default function CreateAccount({ setToken }) {
         password,
         passwordConfirmation
       });
-      setToken(token);
+      setToken(token, username);
     } else {
       alert("Password doesn't match confirmation");
     }

@@ -9,12 +9,12 @@ export default function Header(props) {
                 !props.token ? 
                     <button id = "login" onClick={props.toLogin}> Login </button>
                     : 
-                    "Profile"
+                    <button id = "profile"> Profile </button>
                 : null
             }
             
             {props.headerState === 'start' ?
-                !props.token ? <button>Sign Up</button> : null
+                !props.token ? <button id = "register" onClick={props.toRegister}>Sign Up</button> : null
                 : null
             }
         </header>

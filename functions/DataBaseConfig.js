@@ -12,5 +12,4 @@ const firebaseConfig = {
   measurementId: "G-JNWWJWH025"
 };
 firebase.initializeApp(firebaseConfig)
-const database = firebase.database()
-exports.database
+exports.database = firebase.database()

@@ -4,6 +4,7 @@ import './App.css';
 import Dashboard from './Dashboard';
 import Header from './Header';
 import Login from './Login';
+import CreateAccount from './CreateAccount';
 
 function App() {
   const { token, setToken } = useToken();
@@ -13,11 +14,16 @@ function App() {
     setHeaderState('loginClicked');
   }
 
+  let toRegister = () => {
+    setHeaderState('registerClicked');
+  }
+  
   return (
     <div className = "wrapper">
-      <Header toLogin = {toLogin} headerState = {headerState} token = {token}></Header>
-      {headerState === 'start' && <Dashboard></Dashboard>}
-      {headerState === 'loginClicked' && <Login setToken={setToken}></Login>}
+      <Header toLogin = {toLogin} headerState = {headerState} token = {token}  toRegister = {toRegister} />
+      {headerState === 'start' && <Dashboard/>}
+      {headerState === 'loginClicked' && <Login path = "/login" setToken={setToken}></Login>}
+      {headerState === 'registerClicked' && <CreateAccount path = "/register" setToken={setToken}></CreateAccount>}
     </div>
   );
 }
