@@ -1,9 +1,12 @@
 import './Header.css';
+import { HomeOutlined } from '@ant-design/icons';
 
 export default function Header(props) {
     return(
         <header>
             <h1>MaBots</h1>
+
+            <HomeOutlined onClick={props.toStart} className="home-button" twoToneColor="#eb2f96" />
 
             {props.headerState === 'start' ? 
                 !props.token ? 

@@ -26,3 +26,13 @@ header > button {
 header > button:hover {
     /* background-color: antiquewhite; */
 }
+
+.home-button {
+    border: none;
+    background-color: transparent;
+    position: relative;
+    left: -5%;
+    margin-top: 5%;
+    font-size: 2em;
+    cursor: pointer;
+}

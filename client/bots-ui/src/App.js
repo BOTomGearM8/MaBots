@@ -28,6 +28,10 @@ function App() {
     setHeaderState('profileClicked');
   }
 
+  let toStart = () => {
+    setHeaderState('start');
+  }
+
   let loginSubmitted = () => {
     setHeaderState('start');
   }
@@ -36,7 +40,8 @@ function App() {
     <div className = "wrapper">
       <Header toLogin = {toLogin} headerState = {headerState}
               token = {token}  toRegister = {toRegister}
-              toProfile = {toProfile} doLogout = {doLogout}/>
+              toProfile = {toProfile} doLogout = {doLogout}
+              toStart = {toStart}/>
       {headerState === 'start' && <Dashboard/>}
       {headerState === 'loginClicked' && <Login setToken={setToken} 
                                                 loginSubmitted = {loginSubmitted} ></Login>}
