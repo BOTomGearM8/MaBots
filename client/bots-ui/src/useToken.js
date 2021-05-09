@@ -11,22 +11,31 @@ export default function useToken() {
 
   const saveToken = (userToken, username) => {
     window.sessionStorage.setItem('token', JSON.stringify(userToken));
+    
     var map = JSON.parse(window.sessionStorage.getItem('tokenMap'));
     if (map == null)
       map = {}
     map[userToken.token] = username;
     console.log(map)
     window.sessionStorage.setItem('tokenMap', JSON.stringify(map))
-    // if (sessionStorage.map) {
-    //   sessionStorage.map[userToken.token] = username;
-    // }else {
-    //   sessionStorage.map = {}
-    // }
+
     console.log(map)
     setToken(userToken.token);
   };
 
+  const deleteToken = (userToken) => {
+    window.sessionStorage.setItem('token', JSON.stringify(userToken));
+    
+    var map = JSON.parse(window.sessionStorage.getItem('tokenMap'));
+    map[userToken.token] = null;
+    window.sessionStorage.setItem('tokenMap', JSON.stringify(map))
+
+    console.log(map)
+    setToken(null);
+  };
+
   return {
+    deleteToken: deleteToken,
     setToken: saveToken,
     token
   }

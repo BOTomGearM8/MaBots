@@ -4,26 +4,44 @@ import './App.css';
 import Dashboard from './Dashboard';
 import Header from './Header';
 import Login from './Login';
+import Profile from './Profile';
 import CreateAccount from './CreateAccount';
 
 function App() {
-  const { token, setToken } = useToken();
+  const { token, setToken, deleteToken } = useToken();
   const [headerState, setHeaderState] = useState('start');
 
   let toLogin = () => {
     setHeaderState('loginClicked');
   }
 
+  let doLogout = () => {
+    setHeaderState('start');
+    deleteToken(token);
+  }
+
   let toRegister = () => {
     setHeaderState('registerClicked');
   }
-  
+
+  let toProfile = () => {
+    setHeaderState('profileClicked');
+  }
+
+  let loginSubmitted = () => {
+    setHeaderState('start');
+  }
+
   return (
     <div className = "wrapper">
-      <Header toLogin = {toLogin} headerState = {headerState} token = {token}  toRegister = {toRegister} />
+      <Header toLogin = {toLogin} headerState = {headerState}
+              token = {token}  toRegister = {toRegister}
+              toProfile = {toProfile} doLogout = {doLogout}/>
       {headerState === 'start' && <Dashboard/>}
-      {headerState === 'loginClicked' && <Login path = "/login" setToken={setToken}></Login>}
-      {headerState === 'registerClicked' && <CreateAccount path = "/register" setToken={setToken}></CreateAccount>}
+      {headerState === 'loginClicked' && <Login setToken={setToken} 
+                                                loginSubmitted = {loginSubmitted} ></Login>}
+      {headerState === 'registerClicked' && <CreateAccount setToken={setToken}></CreateAccount>}
+      {headerState === 'profileClicked' && <Profile setToken={setToken}></Profile>}
     </div>
   );
 }

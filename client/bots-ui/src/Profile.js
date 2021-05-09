@@ -8,6 +8,10 @@ export default function Profile() {
     return (
         <div className="profile-wrapper">
             <h1> {user} </h1>
+            <h2> My Bots </h2>
+            <div>
+                <p> list </p>
+            </div>
         </div>
     );
 }
