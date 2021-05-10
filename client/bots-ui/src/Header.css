@@ -1,16 +1,26 @@
 header {
     width: 100%;
     height: 15%;  /* not working unless parent's height specified */
-    background-color: lavender;
     display: flex;
     flex-direction: row;
+}
+
+header:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    background: linear-gradient(45deg, lavender, rgb(74, 131, 255));
+    border-radius: 0 0 50% 50%/0 0 80% 80%;
 }
 
 header > h1 {
     color: teal;
     font-size: 4em;
     position: relative;
-    left: 45%;
+    left: 44%;
 }
 
 header > button {
