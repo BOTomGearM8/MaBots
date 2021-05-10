@@ -10,6 +10,7 @@ import CreateAccount from './CreateAccount';
 function App() {
   const { token, setToken, deleteToken } = useToken();
   const [headerState, setHeaderState] = useState('start');
+  const [dashboardState, setDashboardState] = useState('start');
 
   let toLogin = () => {
     setHeaderState('loginClicked');
@@ -30,6 +31,7 @@ function App() {
 
   let toStart = () => {
     setHeaderState('start');
+    setDashboardState('start');
   }
 
   let loginSubmitted = () => {
@@ -42,7 +44,8 @@ function App() {
               token = {token}  toRegister = {toRegister}
               toProfile = {toProfile} doLogout = {doLogout}
               toStart = {toStart}/>
-      {headerState === 'start' && <Dashboard/>}
+      {headerState === 'start' && <Dashboard dashboardState = {dashboardState}
+                                             setDashboardState = {setDashboardState}/>}
       {headerState === 'loginClicked' && <Login setToken={setToken} 
                                                 loginSubmitted = {loginSubmitted} ></Login>}
       {headerState === 'registerClicked' && <CreateAccount setToken={setToken}></CreateAccount>}
