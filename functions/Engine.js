@@ -1,6 +1,8 @@
 const ps = require("prompt-sync");
 
 const prompt = ps();    // Used for user input
+
+// TO DO: define game variables inside engine() and send them as parameters(?)
 var board = [];         // Game board
 var gameStates = []     // Game states history
 var round = 0;          // Current round
@@ -15,7 +17,7 @@ class Action {
         this.y1 = y1;
         this.x2 = x2;
         this.y2 = y2;
-        this.type = type;   // 'm' for move OR 'c' for create
+        this.type = type;   // 'm' for move OR 'c' for create OR 'f' for forfeit
     }
 }
 
@@ -325,7 +327,7 @@ function createBoard() {
                 board[towerX][towerY].isHQ() ||
                 board[boardSize - towerX - 1][boardSize - towerY - 1].isHQ());
 
-        // create symmetric towers
+        // create symmetrical towers
         var rand = Math.floor(Math.random() * 2);
 
         board[towerX][towerY].makeTower(Math.ceil(boardSize / 2) - i + rand);
@@ -333,10 +335,12 @@ function createBoard() {
             .makeTower(Math.ceil(boardSize / 2) - i + rand);
     }
 
+    // HQs are towers; each player starts with one
     noTowersPlayer1 = 1;
     noTowersPlayer2 = 1;
 }
 
+// TO DO: read input from bots
 // Read action from input
 function getActionFromInput() {
     var actType;
@@ -557,6 +561,9 @@ function engine() {
     process.stdout.write(" WON!\n");
 
     printBoard(board);
+
+    // TO DO: send gameStates to frontend
 }
 
+// TO DO: should wait for request from frontend to start(?)
 engine();
