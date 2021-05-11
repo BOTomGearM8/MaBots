@@ -34,7 +34,7 @@ header > button {
 }
 
 header > button:hover {
-    /* background-color: antiquewhite; */
+    color: antiquewhite;
 }
 
 .home-button {
@@ -45,4 +45,8 @@ header > button:hover {
     margin-top: 5%;
     font-size: 2em;
     cursor: pointer;
+}
+
+.home-button:hover {
+    color: rgb(196, 147, 84);
 }
