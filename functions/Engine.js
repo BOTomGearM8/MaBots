@@ -2,6 +2,8 @@ const ps = require("prompt-sync");
 
 const prompt = ps();    // Used for user input
 var board = [];         // Game board
+var gameStates = []     // Game states history
+var round = 0;          // Current round
 var gameOver = 0;       // Game over condition
 var boardSize = 5;      // Size of game board
 var noTowersPlayer1, noTowersPlayer2;
@@ -57,13 +59,13 @@ class PrintWithColors {
 // Class that contains details of a board cell
 class GridCell {
     // Constructor for empty cells
-    constructor(x, y)  {
+    constructor(x, y, faction, no_soldiers, tower, hq)  {
         this.x = x;
         this.y = y;
-        this.faction = 0;
-        this.no_soldiers = 0;
-        this.tower = 0;
-        this.hq = 0;
+        this.faction = faction;
+        this.no_soldiers = no_soldiers;
+        this.tower = tower;
+        this.hq = hq;
     }
 
     // Initialize cell as a neutral tower with no_soldiers power
@@ -86,6 +88,14 @@ class GridCell {
 
         if (this.no_soldiers == 0) {
             if (this.hq == 0) {
+                if (this.tower == 1) {
+                    if (this.faction == 1) {
+                        noTowersPlayer1--;
+                    } else {
+                        noTowersPlayer2--;
+                    }
+                }
+
                 this.faction = 0;
             }
         }
@@ -151,6 +161,11 @@ class GridCell {
                     this.no_soldiers--;
 
                     if (this.no_soldiers == 0) {
+                        if (this.faction == 1) {
+                            noTowersPlayer1--;
+                        } else if (this.faction == 2) {
+                            noTowersPlayer2--;
+                        }
                         this.faction = 0;
                     }
                 }
@@ -221,8 +236,16 @@ class GridCell {
     }
 
     // Check if HQ
-    isHq() {
+    isHQ() {
         return this.hq;
+    }
+
+    getFaction() {
+        return this.faction;
+    }
+
+    getNoSoldiers() {
+        return this.no_soldiers;
     }
 
     // Check if cell has tower than belong to certain player
@@ -247,7 +270,7 @@ function createStandardBoard() {
     for (var i = 0; i < boardSize; i++) {
         board[i] = [];
         for (var j = 0; j < boardSize; j++) {
-            board[i][j] = new GridCell(i, j);
+            board[i][j] = new GridCell(i, j, 0, 0, 0, 0);
         }
     }
 
@@ -265,21 +288,52 @@ function createStandardBoard() {
 }
 
 // Prints game board
-function printBoard() {
-    for (var i = 0; i < 5; i++) {
-        process.stdout.write("----------------------------------------------\n");
-        for (var j = 0; j < 5; j++) {
+function printBoard(boardState) {
+    for (var i = 0; i < boardSize; i++) {
+        process.stdout.write("-".repeat(9 * boardSize) + "-\n");
+        for (var j = 0; j < boardSize; j++) {
             process.stdout.write("| ");
-            process.stdout.write(board[i][j].printCell());
+            process.stdout.write(boardState[i][j].printCell());
         }
         process.stdout.write("|\n");
     }
-    process.stdout.write("----------------------------------------------\n\n");
+    process.stdout.write("-".repeat(9 * boardSize) + "-\n\n");
 }
 
 // Create random symetrical board
 function createBoard() {
-    // TO DO
+    for (let i = 0; i < boardSize; i++) {
+        board[i] = [];
+        for (let j = 0; j < boardSize; j++) {
+            board[i][j] = new GridCell(i, j, 0, 0, 0, 0);
+        }
+    }
+
+    board[0][0].makeHQ(2, 1);                           // RED HQ
+    board[boardSize - 1][boardSize - 1].makeHQ(2, 2);   // BLUE HQ
+    
+    let towerX, towerY;
+
+    for (let i = 0; i < Math.floor(boardSize / 2); ++i) {
+        do {
+            towerX = Math.floor(Math.random() * (boardSize - 1));
+            towerY = Math.floor(Math.random() * (boardSize - 1));
+        } while (board[towerX][towerY].isTower() ||
+                board[boardSize - towerX - 1][boardSize - towerY - 1].isTower() ||
+                (towerX === boardSize - towerX - 1 && 
+                 towerY === boardSize - towerY - 1) ||
+                board[towerX][towerY].isHQ() ||
+                board[boardSize - towerX - 1][boardSize - towerY - 1].isHQ());
+
+        // create symmetric towers
+        let rand = Math.floor(Math.random() * 2);
+        board[towerX][towerY].makeTower(Math.ceil(boardSize / 2) - i + rand);
+        board[boardSize - towerX - 1][boardSize - towerY - 1]
+            .makeTower(Math.ceil(boardSize / 2) - i + rand);
+    }
+
+    noTowersPlayer1 = 1;
+    noTowersPlayer2 = 1;
 }
 
 // Read action from input
@@ -392,7 +446,7 @@ function checkValidAction(action, curPlayer) {
 
         // Check if you can move a soldier form start cell
         if (board[action.x1][action.y1].validStartCell(curPlayer) == 0) {
-            console.log("ERROR: Tou don't control the start cell or no soldiers are there");
+            console.log("ERROR: You don't control the start cell or no soldiers are there");
 
             return 0;
         }
@@ -428,17 +482,46 @@ function processTurn(playerActions, curPlayer) {
     processAction(action2, curPlayer);
 }
 
+function printGameStates() {
+    for (var i = 0; i < round; i++) {
+        printBoard(gameStates[i]);
+    }
+}
+
+function addGameState() {
+    gameStates[round] = []
+    for (var i = 0; i < boardSize; i++) {
+        gameStates[round][i] = []
+        for (var j = 0; j < boardSize; j++) {
+            gameStates[round][i][j] = new GridCell( 
+                    i, 
+                    j, 
+                    board[i][j].getFaction(),
+                    board[i][j].getNoSoldiers(),
+                    board[i][j].isTower(),
+                    board[i][j].isHQ()
+                );
+        }
+    }
+}
+
 // Main fucntion of the game
 function engine() {
     var curPlayer = 2;
 
     // Create board
-    createStandardBoard();
+    //createStandardBoard();
+    createBoard();
 
     while (gameOver == 0) {
         // Switch player
         curPlayer ^= 1 ^ 2;
         
+        addGameState();
+
+        // Increment round
+        round++;
+
         process.stdout.write("\nPlayer to move: ");
 
         if (curPlayer == 1) {
@@ -447,7 +530,7 @@ function engine() {
             console.log(PrintWithColors.printBlue("Blue"));
         }
 
-        printBoard();
+        printBoard(board);
 
         // Get actions form player
         var playerActions = getPlayerActions();
@@ -464,7 +547,7 @@ function engine() {
     }
 
     // Game over
-    process.stdout.write("GAME OVER! PLAYER ");
+    process.stdout.write("GAME OVER IN ROUND: " + round + " ! PLAYER ");
     if (curPlayer == 1) {
         process.stdout.write(PrintWithColors.printRed("RED"));
     } else {
@@ -472,7 +555,7 @@ function engine() {
     }
     process.stdout.write(" WON!\n");
 
-    printBoard();
+    printBoard(board);
 }
 
 engine();
