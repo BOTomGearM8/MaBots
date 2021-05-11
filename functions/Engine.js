@@ -267,9 +267,9 @@ class GridCell {
 
 // Creates the same board each time
 function createStandardBoard() {
-    for (var i = 0; i < boardSize; i++) {
+    for (let i = 0; i < boardSize; i++) {
         board[i] = [];
-        for (var j = 0; j < boardSize; j++) {
+        for (let j = 0; j < boardSize; j++) {
             board[i][j] = new GridCell(i, j, 0, 0, 0, 0);
         }
     }
@@ -289,9 +289,9 @@ function createStandardBoard() {
 
 // Prints game board
 function printBoard(boardState) {
-    for (var i = 0; i < boardSize; i++) {
+    for (let i = 0; i < boardSize; i++) {
         process.stdout.write("-".repeat(9 * boardSize) + "-\n");
-        for (var j = 0; j < boardSize; j++) {
+        for (let j = 0; j < boardSize; j++) {
             process.stdout.write("| ");
             process.stdout.write(boardState[i][j].printCell());
         }
@@ -312,7 +312,7 @@ function createBoard() {
     board[0][0].makeHQ(2, 1);                           // RED HQ
     board[boardSize - 1][boardSize - 1].makeHQ(2, 2);   // BLUE HQ
     
-    let towerX, towerY;
+    var towerX, towerY;
 
     for (let i = 0; i < Math.floor(boardSize / 2); ++i) {
         do {
@@ -326,7 +326,8 @@ function createBoard() {
                 board[boardSize - towerX - 1][boardSize - towerY - 1].isHQ());
 
         // create symmetric towers
-        let rand = Math.floor(Math.random() * 2);
+        var rand = Math.floor(Math.random() * 2);
+
         board[towerX][towerY].makeTower(Math.ceil(boardSize / 2) - i + rand);
         board[boardSize - towerX - 1][boardSize - towerY - 1]
             .makeTower(Math.ceil(boardSize / 2) - i + rand);
@@ -483,16 +484,16 @@ function processTurn(playerActions, curPlayer) {
 }
 
 function printGameStates() {
-    for (var i = 0; i < round; i++) {
+    for (let i = 0; i < round; i++) {
         printBoard(gameStates[i]);
     }
 }
 
 function addGameState() {
     gameStates[round] = []
-    for (var i = 0; i < boardSize; i++) {
+    for (let i = 0; i < boardSize; i++) {
         gameStates[round][i] = []
-        for (var j = 0; j < boardSize; j++) {
+        for (let j = 0; j < boardSize; j++) {
             gameStates[round][i][j] = new GridCell( 
                     i, 
                     j, 
