@@ -136,4 +136,10 @@ app.post('/upload', uploader.single('image'), async (req, res, next) => {
   }
 });
 
+
+// Start engine and return game states
+app.post('/play', async (req, res) => {
+
+});
+
 app.listen(8080, () => console.log('API is running on http://localhost:8080/'));
