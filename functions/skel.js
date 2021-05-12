@@ -225,10 +225,12 @@ class GridCell {
         return this.hq;
     }
 
+    // Get faction
     getFaction() {
         return this.faction;
     }
 
+     // Get number of soldiers
     getNoSoldiers() {
         return this.no_soldiers;
     }
