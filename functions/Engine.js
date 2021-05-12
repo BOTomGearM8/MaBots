@@ -1,4 +1,7 @@
 const ps = require("prompt-sync");
+const skel = require("./skel");
+const bot1 = require("./bot1");
+const bot2 = require("./bot2");
 
 const prompt = ps();    // Used for user input
 
@@ -8,35 +11,10 @@ var gameStates = []     // Game states history
 var round = 0;          // Current round
 var gameOver = 0;       // Game over condition
 var boardSize = 5;      // Size of game board
+var no_sold_start = 2;
+var round_to_tie = 20;
 var noTowersPlayer1, noTowersPlayer2;
 
-// Class that holds information about each action of a player
-class Action {
-    constructor(x1, y1, x2, y2, type) {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
-        this.type = type;   // 'm' for move OR 'c' for create OR 'f' for forfeit
-    }
-}
-
-// Class that holds the 2 actions of a player in a round
-class RoundActions {
-    // Constructor for adding the 2 actions to the DTO
-    constructor(action1, action2) {
-        this.action1 = action1;
-        this.action2 = action2;
-    }
-
-    getAction1() {
-        return this.action1;
-    }
-    
-    getAction2() {
-        return this.action2;
-    }
-}
 
 // Class for adding color to text
 class PrintWithColors {
@@ -276,8 +254,8 @@ function createStandardBoard() {
         }
     }
 
-    board[0][0].makeHQ(2, 1);
-    board[4][4].makeHQ(2, 2);
+    board[0][0].makeHQ(no_sold_start, 1);
+    board[4][4].makeHQ(no_sold_start, 2);
     
     board[4][0].makeTower(2);
     board[0][4].makeTower(2);
@@ -311,8 +289,8 @@ function createBoard() {
         }
     }
 
-    board[0][0].makeHQ(2, 1);                           // RED HQ
-    board[boardSize - 1][boardSize - 1].makeHQ(2, 2);   // BLUE HQ
+    board[0][0].makeHQ(no_sold_start, 1);                           // RED HQ
+    board[boardSize - 1][boardSize - 1].makeHQ(no_sold_start, 2);   // BLUE HQ
     
     var towerX, towerY;
 
@@ -362,7 +340,7 @@ function getActionFromInput() {
         x2 = y2 = 0;
     }
 
-    return new Action(x1, y1, x2, y2, actType);
+    return new skel.Action(x1, y1, x2, y2, actType);
 }
 
 // Get player actions for this turn
@@ -383,7 +361,7 @@ function getPlayerActions() {
         return -1;
     }
 
-    return new RoundActions(action1, action2);
+    return new skel.RoundActions(action1, action2);
 }
 
 // Check if coordinates inside game board
@@ -510,15 +488,21 @@ function addGameState() {
     }
 }
 
-// Main fucntion of the game
+// Main function of the game
 function engine() {
     var curPlayer = 2;
+
+    var player1 = new bot1.MaBot(1, 0, 0, no_sold_start);
+    var player2 = new bot1.MaBot(2, 4, 4, no_sold_start);
 
     // Create board
     //createStandardBoard();
     createBoard();
 
-    while (gameOver == 0) {
+    var playerActions;
+    var prevTurn = null;
+    
+    while (gameOver == 0 && round < round_to_tie) {
         // Switch player
         curPlayer ^= 1 ^ 2;
         
@@ -538,7 +522,13 @@ function engine() {
         printBoard(board);
 
         // Get actions form player
-        var playerActions = getPlayerActions();
+        //var playerActions = getPlayerActions();
+
+        if (curPlayer == 1) {
+            playerActions = player1.getPlayerActions(prevTurn);
+        } else {
+            playerActions = player2.getPlayerActions(prevTurn);
+        }
 
         // Check forfeit
         if (playerActions == -1) {
@@ -549,21 +539,45 @@ function engine() {
 
         // Process actions
         processTurn(playerActions, curPlayer);
+
+        prevTurn = playerActions;
     }
 
     // Game over
-    process.stdout.write("GAME OVER IN ROUND: " + round + " ! PLAYER ");
-    if (curPlayer == 1) {
-        process.stdout.write(PrintWithColors.printRed("RED"));
-    } else {
-        process.stdout.write(PrintWithColors.printBlue("BLUE"));
-    }
-    process.stdout.write(" WON!\n");
+    
+    // Check if TIE
+    if (round == round_to_tie) {
+        process.stdout.write("GAME OVER IN ROUND: " + round + " ! " + PrintWithColors.printGreen("TIE") + "\n");
 
+        printBoard(board);
+
+        // Send gameStates to frontend
+        return {
+            winner: 0,
+            states: gameStates
+        }
+
+    } else {
+        process.stdout.write("GAME OVER IN ROUND: " + round + " ! PLAYER ");
+        if (curPlayer == 1) {
+            process.stdout.write(PrintWithColors.printRed("RED"));
+        } else {
+            process.stdout.write(PrintWithColors.printBlue("BLUE"));
+        }
+        process.stdout.write(" WON!\n");
+    }
     printBoard(board);
 
-    // TO DO: send gameStates to frontend
+    // Send gameStates to frontend
+    return {
+        winner: curPlayer,
+        states: gameStates
+    }
 }
 
 // TO DO: should wait for request from frontend to start(?)
-engine();
+
+// Uncomment for testing
+// engine();
+
+exports.engine = engine;
