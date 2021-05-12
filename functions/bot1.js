@@ -2,15 +2,16 @@ const skel = require("./skel");
 
 class MaBot {
     // DO NOT CHANGE
-    constructor(faction, x, y, no_soldiers) {
+    constructor(faction, x, y, no_soldiers, board) {
         this.faction = faction;
         this.x = x;
         this.y = y;
         this.no_sold_start = no_soldiers;
+        this.board = board;
     }
 
     // Add logic here
-    getPlayerActions(enemysAction) {
+    getPlayerActions() {
         var action1 = new skel.Action(this.x, this.y, 0, 0, 'c');
         var action2;
 

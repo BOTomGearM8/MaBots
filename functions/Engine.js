@@ -14,243 +14,15 @@ var boardSize = 5;      // Size of game board
 var no_sold_start = 2;
 var round_to_tie = 20;
 var noTowersPlayer1, noTowersPlayer2;
+const HQ_TAKEN = 6613;
 
-
-// Class for adding color to text
-class PrintWithColors {
-    constructor(){}
-
-    // Red
-    static printRed(text) {
-        return "\x1b[91m" + text + "\x1b[39m";
-    }
-
-    // Blue
-    static printBlue(text) {
-        return "\x1b[94m" + text + "\x1b[39m";
-    }
-
-    // Green
-    static printGreen(text) {
-        return "\x1b[92m" + text + "\x1b[39m";
-    }
-}
-
-// Class that contains details of a board cell
-class GridCell {
-    // Constructor for empty cells
-    constructor(x, y, faction, no_soldiers, tower, hq)  {
-        this.x = x;
-        this.y = y;
-        this.faction = faction;
-        this.no_soldiers = no_soldiers;
-        this.tower = tower;
-        this.hq = hq;
-    }
-
-    // Initialize cell as a neutral tower with no_soldiers power
-    makeTower(no_soldiers) {
-        this.no_soldiers = no_soldiers;
-        this.tower = 1;
-    }
-
-    // Initialize cell as a players HQ
-    makeHQ(no_soldiers, faction) {
-        this.no_soldiers = no_soldiers;
-        this.tower = 1;
-        this.faction = faction;
-        this.hq = 1;
-    }
-
-    // Remove one soldier from the cell
-    removeOneSoldier() {
-        this.no_soldiers--;
-
-        if (this.no_soldiers == 0) {
-            if (this.hq == 0) {
-                if (this.tower == 1) {
-                    if (this.faction == 1) {
-                        noTowersPlayer1--;
-                    } else {
-                        noTowersPlayer2--;
-                    }
-                }
-
-                this.faction = 0;
-            }
-        }
-    }
-
-    // Add a soldier form a faction
-    addFactionSoldier(faction) {
-        // Cehck if HQ
-        if (this.hq == 1) { 
-            // If players HQ than reinforce
-            if (this.faction == faction) {
-                this.no_soldiers++;
-            } else {
-                // If HQ has no defense than capture it
-                if (this.no_soldiers == 0) {
-                    // GAME OVER, player 'faction' won
-                    this.no_soldiers++;
-                    this.faction = faction;
-                    
-                    gameOver = 1;
-                    return faction;
-                // If HQ has defense than kill one enemy
-                } else {
-                    this.no_soldiers--;
-                }
-            }
-
-        // Check if tower
-        } else if (this.tower == 1) {
-
-            // If same faction than add reinforcements
-            if (this.faction == faction) {
-                this.no_soldiers++;
-            
-            } else {
-                // If tower is empty capture it
-                if (this.no_soldiers == 0) {
-                    this.faction = faction;
-                    this.no_soldiers = 1;
-
-                    if (faction == 1) {
-                        // Update no of towers for player
-                        noTowersPlayer1++;
-
-                        // Check if game over because of number of towers
-                        if (noTowersPlayer1 - noTowersPlayer2 > 1) {
-                            gameOver = 1;
-                            return faction;
-                        }
-                    } else {
-                        // Update no of towers for player
-                        noTowersPlayer2++;
-
-                        // Check if game over because of number of towers
-                        if (noTowersPlayer2 - noTowersPlayer1 > 1) {
-                            gameOver = 1;
-                            return faction;
-                        }
-                    }
-
-                // Else kill one enemy
-                } else {
-                    this.no_soldiers--;
-
-                    if (this.no_soldiers == 0) {
-                        if (this.faction == 1) {
-                            noTowersPlayer1--;
-                        } else if (this.faction == 2) {
-                            noTowersPlayer2--;
-                        }
-                        this.faction = 0;
-                    }
-                }
-            }
-        
-        // If clear cell
-        } else {
-            // If empty capture it
-            if (this.no_soldiers == 0) {
-                this.faction = faction;
-                this.no_soldiers = 1;
-            } else {
-                // If players cell than reinforce
-                if (this.faction == faction) {
-                    this.no_soldiers++;
-                // If opponents cell than kill one soldier
-                } else {
-                    this.no_soldiers--;
-
-                    if (this.no_soldiers == 0) {
-                        this.faction = 0;
-                    }
-                }
-            }
-        }
-
-        return 0;
-    }
-
-    // Create soldier in cell
-    createSoldier() {
-        this.no_soldiers++;
-    }
-
-    // Create string for output
-    createCellString(type) {
-        var text = type + " " + this.no_soldiers + " ";
-
-        if (this.faction == 1) {
-            return PrintWithColors.printRed(text);
-        } else if (this.faction == 2) {
-            return PrintWithColors.printBlue(text);
-        } else if (this.tower == 1) {
-            return PrintWithColors.printGreen(text);
-        } else {
-            return text;
-        }
-    }
-
-    // Print cell details
-    printCell() {
-        var cellString = "";
-
-        if (this.hq == 1) {
-            cellString = this.createCellString("HQ :");
-        } else if (this.tower == 1) {
-            cellString = this.createCellString(" T :");
-        } else {
-            cellString = this.createCellString("    ");
-        }
-
-        return cellString;
-    }
-
-    // Check if tower
-    isTower() {
-        return this.tower;
-    }
-
-    // Check if HQ
-    isHQ() {
-        return this.hq;
-    }
-
-    getFaction() {
-        return this.faction;
-    }
-
-    getNoSoldiers() {
-        return this.no_soldiers;
-    }
-
-    // Check if cell has tower than belong to certain player
-    validTower(faction) {
-        if (this.tower == 1 && this.faction == faction) {
-            return 1;
-        }
-        return 0;
-    }
-
-    // Check if player has soldier to move in cell
-    validStartCell(faction) {
-        if (this.faction == faction && this.no_soldiers > 0) {
-            return 1;
-        }
-        return 0;
-    }
-}
 
 // Creates the same board each time
 function createStandardBoard() {
     for (let i = 0; i < boardSize; i++) {
         board[i] = [];
         for (let j = 0; j < boardSize; j++) {
-            board[i][j] = new GridCell(i, j, 0, 0, 0, 0);
+            board[i][j] = new skel.GridCell(i, j, 0, 0, 0, 0);
         }
     }
 
@@ -270,14 +42,14 @@ function createStandardBoard() {
 // Prints game board
 function printBoard(boardState) {
     for (let i = 0; i < boardSize; i++) {
-        process.stdout.write("-".repeat(9 * boardSize) + "-\n");
+        process.stdout.write("-".repeat(10 * boardSize) + "-\n");
         for (let j = 0; j < boardSize; j++) {
             process.stdout.write("| ");
             process.stdout.write(boardState[i][j].printCell());
         }
         process.stdout.write("|\n");
     }
-    process.stdout.write("-".repeat(9 * boardSize) + "-\n\n");
+    process.stdout.write("-".repeat(10 * boardSize) + "-\n\n");
 }
 
 // Create random symetrical board
@@ -285,7 +57,7 @@ function createBoard() {
     for (let i = 0; i < boardSize; i++) {
         board[i] = [];
         for (let j = 0; j < boardSize; j++) {
-            board[i][j] = new GridCell(i, j, 0, 0, 0, 0);
+            board[i][j] = new skel.GridCell(i, j, 0, 0, 0, 0);
         }
     }
 
@@ -438,6 +210,15 @@ function checkValidAction(action, curPlayer) {
     return 1;
 }
 
+// Check if game over because of number of towers
+function checkTowersNo() {
+    if (noTowersPlayer1 - noTowersPlayer2 > 1) {
+        gameOver = 1;
+    } else if (noTowersPlayer2 - noTowersPlayer1 > 1) {
+        gameOver = 2;
+    }
+}
+
 // Process the players action
 function processAction(action, curPlayer) {
     // Check if action is valid
@@ -445,14 +226,37 @@ function processAction(action, curPlayer) {
         return;
     }
 
+    var ret_val;
+
     // If create action
     if (action.type == 'c') {
         board[action.x1][action.y1].createSoldier();
     
     // If move action
     } else {
-        board[action.x1][action.y1].removeOneSoldier();
-        board[action.x2][action.y2].addFactionSoldier(curPlayer);
+        ret_val = board[action.x1][action.y1].removeOneSoldier();
+        
+        if (ret_val == 1) {
+            noTowersPlayer1--;
+        } else if (ret_val == 2) {
+            noTowersPlayer2--;
+        }
+        
+        ret_val = board[action.x2][action.y2].addFactionSoldier(curPlayer);
+        
+        if (ret_val == HQ_TAKEN) {
+            gameOver = curPlayer;
+        } else if (ret_val == 1) {
+            noTowersPlayer1++;
+        } else if (ret_val == 2) {
+            noTowersPlayer2++;
+        } else if (ret_val == -1) {
+            noTowersPlayer1--;
+        } else if (ret_val == -2) {
+            noTowersPlayer2--;
+        }
+
+        checkTowersNo();
     }
 }
 
@@ -476,7 +280,7 @@ function addGameState() {
     for (let i = 0; i < boardSize; i++) {
         gameStates[round][i] = []
         for (let j = 0; j < boardSize; j++) {
-            gameStates[round][i][j] = new GridCell( 
+            gameStates[round][i][j] = new skel.GridCell( 
                     i, 
                     j, 
                     board[i][j].getFaction(),
@@ -492,15 +296,14 @@ function addGameState() {
 function engine() {
     var curPlayer = 2;
 
-    var player1 = new bot1.MaBot(1, 0, 0, no_sold_start);
-    var player2 = new bot1.MaBot(2, 4, 4, no_sold_start);
-
     // Create board
     //createStandardBoard();
     createBoard();
 
+    var player1 = new bot1.MaBot(1, 0, 0, no_sold_start, board);
+    var player2 = new bot1.MaBot(2, 4, 4, no_sold_start, board);
+
     var playerActions;
-    var prevTurn = null;
     
     while (gameOver == 0 && round < round_to_tie) {
         // Switch player
@@ -514,9 +317,9 @@ function engine() {
         process.stdout.write("\nPlayer to move: ");
 
         if (curPlayer == 1) {
-            console.log(PrintWithColors.printRed("Red"));
+            console.log(skel.PrintWithColors.printRed("Red"));
         } else {
-            console.log(PrintWithColors.printBlue("Blue"));
+            console.log(skel.PrintWithColors.printBlue("Blue"));
         }
 
         printBoard(board);
@@ -525,29 +328,27 @@ function engine() {
         //var playerActions = getPlayerActions();
 
         if (curPlayer == 1) {
-            playerActions = player1.getPlayerActions(prevTurn);
+            playerActions = player1.getPlayerActions();
         } else {
-            playerActions = player2.getPlayerActions(prevTurn);
+            playerActions = player2.getPlayerActions();
         }
 
         // Check forfeit
         if (playerActions == -1) {
-            gameOver = 1;
             curPlayer ^= 1 ^ 2;
+            gameOver = curPlayer;
             break;
         }
 
         // Process actions
         processTurn(playerActions, curPlayer);
-
-        prevTurn = playerActions;
     }
 
     // Game over
     
     // Check if TIE
     if (round == round_to_tie) {
-        process.stdout.write("GAME OVER IN ROUND: " + round + " ! " + PrintWithColors.printGreen("TIE") + "\n");
+        process.stdout.write("GAME OVER IN ROUND: " + round + " ! " + skel.PrintWithColors.printGreen("TIE") + "\n");
 
         printBoard(board);
 
@@ -559,10 +360,10 @@ function engine() {
 
     } else {
         process.stdout.write("GAME OVER IN ROUND: " + round + " ! PLAYER ");
-        if (curPlayer == 1) {
-            process.stdout.write(PrintWithColors.printRed("RED"));
+        if (gameOver == 1) {
+            process.stdout.write(skel.PrintWithColors.printRed("RED"));
         } else {
-            process.stdout.write(PrintWithColors.printBlue("BLUE"));
+            process.stdout.write(skel.PrintWithColors.printBlue("BLUE"));
         }
         process.stdout.write(" WON!\n");
     }
@@ -570,7 +371,7 @@ function engine() {
 
     // Send gameStates to frontend
     return {
-        winner: curPlayer,
+        winner: gameOver,
         states: gameStates
     }
 }
