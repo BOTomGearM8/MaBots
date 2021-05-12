@@ -3,6 +3,7 @@ const cors = require('cors');
 const app = express();
 const dbConfig = require('./DataBaseConfig');
 const fileStorage = require('./FileStorage.js');
+const game = require('./Engine.js');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 
@@ -137,9 +138,31 @@ app.post('/upload', uploader.single('image'), async (req, res, next) => {
 });
 
 
+// Download file by username
+app.post ('/download', async (req, res) => {
+  let destFilename = './exp-bot1.js';
+  var options = {
+    // The path to which the file should be downloaded, e.g. "./file.txt"
+    destination: destFilename,
+  };
+
+  // Downloads the file
+  await fileStorage.bucket.file(req.body.filename1).download(options);
+  console.log("First bot downloaded");
+
+  destFilename = './exp-bot2.js';
+  options = {
+    destination: destFilename,
+  };
+  await fileStorage.bucket.file(req.body.filename1).download(options);
+  console.log("Second bot downloaded");
+});
+
+
 // Start engine and return game states
 app.post('/play', async (req, res) => {
-
+  res.send(game.engine());
 });
+
 
 app.listen(8080, () => console.log('API is running on http://localhost:8080/'));
