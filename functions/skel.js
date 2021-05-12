@@ -48,6 +48,8 @@ class PrintWithColors {
 
 // Class that contains details of a board cell
 class GridCell {
+    static HQ_TAKEN = 6613;
+
     // Constructor for empty cells
     constructor(x, y, faction, no_soldiers, tower, hq)  {
         this.x = x;
@@ -80,13 +82,13 @@ class GridCell {
             if (this.hq == 0) {
                 if (this.tower == 1) {
                     if (this.faction == 1) {
+                        this.faction = 0;
                         return 1;
                     } else {
+                        this.faction = 0;
                         return 2;
                     }
                 }
-
-                this.faction = 0;
             }
         }
 
@@ -107,7 +109,7 @@ class GridCell {
                     this.no_soldiers++;
                     this.faction = faction;
                     
-                    return GAME_OVER;
+                    return GridCell.HQ_TAKEN;
                 // If HQ has defense than kill one enemy
                 } else {
                     this.no_soldiers--;

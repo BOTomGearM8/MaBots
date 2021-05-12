@@ -14,7 +14,6 @@ var boardSize = 5;      // Size of game board
 var no_sold_start = 2;
 var round_to_tie = 20;
 var noTowersPlayer1, noTowersPlayer2;
-const HQ_TAKEN = 6613;
 
 
 // Creates the same board each time
@@ -244,7 +243,7 @@ function processAction(action, curPlayer) {
         
         ret_val = board[action.x2][action.y2].addFactionSoldier(curPlayer);
         
-        if (ret_val == HQ_TAKEN) {
+        if (ret_val == skel.GridCell.HQ_TAKEN) {
             gameOver = curPlayer;
         } else if (ret_val == 1) {
             noTowersPlayer1++;
@@ -297,7 +296,7 @@ function engine() {
     var curPlayer = 2;
 
     // Create board
-    //createStandardBoard();
+    // createStandardBoard();
     createBoard();
 
     var player1 = new bot1.MaBot(1, 0, 0, no_sold_start, board);
@@ -325,7 +324,7 @@ function engine() {
         printBoard(board);
 
         // Get actions form player
-        //var playerActions = getPlayerActions();
+        // playerActions = getPlayerActions();
 
         if (curPlayer == 1) {
             playerActions = player1.getPlayerActions();
@@ -348,7 +347,7 @@ function engine() {
     
     // Check if TIE
     if (round == round_to_tie) {
-        process.stdout.write("GAME OVER IN ROUND: " + round + " ! " + skel.PrintWithColors.printGreen("TIE") + "\n");
+        process.stdout.write("\nGAME OVER IN ROUND: " + round + " ! " + skel.PrintWithColors.printGreen("TIE") + "\n");
 
         printBoard(board);
 
@@ -359,7 +358,7 @@ function engine() {
         }
 
     } else {
-        process.stdout.write("GAME OVER IN ROUND: " + round + " ! PLAYER ");
+        process.stdout.write("\nGAME OVER IN ROUND: " + round + " ! PLAYER ");
         if (gameOver == 1) {
             process.stdout.write(skel.PrintWithColors.printRed("RED"));
         } else {
