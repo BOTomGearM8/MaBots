@@ -18,6 +18,7 @@ header:before {
 
 header > h1 {
     color: teal;
+    font-family: 'Garamond', cursive;
     font-size: 4em;
     position: relative;
     left: 44%;
