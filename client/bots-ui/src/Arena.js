@@ -1,5 +1,5 @@
 import './Arena.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 async function downloadBot(bot1, bot2) {
@@ -32,7 +32,7 @@ export default function Arena() {
     const [gameStates, setGameStates] = useState();
     const [winner, setWinner] = useState();
     const [boards, setBoards] = useState();
-    var x;
+    var x = 0;
 
     let handleSubmit = () => {
         setFightStarted(true);
@@ -56,7 +56,6 @@ export default function Arena() {
             color = "#000";
 
         text = text.concat(cell.no_soldiers);
-        //TODO: add colors
         return <td><font color={color}>{text}</font></td>;
     }
 
@@ -76,9 +75,6 @@ export default function Arena() {
             let board = res.states[k];
             final[k] = [];
             for (let i = 0; i < board.length; ++i) {
-                // for (let j = 0; j < board[0].length; ++j) {
-                //     let cell = board[i][j];
-                // }
                 final[k][i] = board[i].map(cell => cellToTable(cell));
                 console.log(final[k][i]);
             }
@@ -88,30 +84,41 @@ export default function Arena() {
         setBoards(final);
     }
 
-    // useEffect(() => {
-    //     playGame().then(res =>
-    //       {
-    //         setGameStates(res.states);
-    //         setWinner(res.winner);
-    //         setSimulationStarted(true);
+    // let update = () => {
+    //     setStateIdx(stateIdx + 1);
+    //     window.requestAnimationFrame(update);
+    // }
 
-    //         console.log(res.states);
-    //         var final = {};
-    //         for (let k = 0; k < res.states.length; ++k) {
-    //             let board = res.states[k];
-    //             final[k] = {};
-    //             for (let i = 0; i < board.length; ++i) {
-    //                 // for (let j = 0; j < board[0].length; ++j) {
-    //                 //     let cell = board[i][j];
-    //                 // }
-    //                 final[k][i] = board[i].map(cell => cellToTable(cell));
-    //             }
-    //             final[k] = board.map(row => rowToTable(row));
-    //         }
-    //         console.log(final);
-    //         setBoards(final);
-    //         });
-    //   }, []);
+    const requestRef = useRef();
+    const previousTimeRef = useRef();
+  
+    const animate = async time => {
+        if (previousTimeRef.current != undefined) {
+            const deltaTime = time - previousTimeRef.current;
+            
+            // Pass on a function to the setter of the state
+            // to make sure we always have the latest state
+            //if (simulationStarted) {
+                //await setStateIdx(stateIdx + 1);
+            //}
+            if (simulationStarted) {
+                console.log(x);
+                //setStateIdx(stateIdx + 1);
+                x += 1;
+            } else {
+                setStateIdx(0);
+                x = 0;
+            }
+        }
+        previousTimeRef.current = time;
+        requestRef.current = await requestAnimationFrame(animate);
+    }
+  
+    useEffect(() => {
+        x = 0;
+        requestRef.current = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(requestRef.current);
+    }, []);
 
     return(
         <section id = "Arena">
@@ -134,7 +141,7 @@ export default function Arena() {
                 </div> : 
                     <div className="game-wrapper">
                         {!simulationStarted ? <button onClick = {handleOnClick}> Start Simulation </button> :
-                                                        (boards ? <table>{boards[0]}</table> : <p> Loading... </p>)}
+                                                        (boards ? <table><tbody>{boards[x < 20 ? x : 0]}</tbody></table> : <p> Loading... </p>)}
                     </div>
                 }
             </div>
