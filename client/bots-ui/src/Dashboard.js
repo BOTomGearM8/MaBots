@@ -4,15 +4,21 @@ import Arena from './Arena';
 import './Dashboard.css'
 import { RobotOutlined } from '@ant-design/icons';
 import { BookOutlined } from '@ant-design/icons';
+import { useEffect } from 'react'
 
 export default function Dashboard(props) {
   let toDoc = () => {
     props.setDashboardState('doc');
+    props.setHeaderState('doc');
   }
 
   let toArena = () => {
     props.setDashboardState('arena');
+    props.setHeaderState('arena');
   }
+
+  // cancel initial scroll
+  window.scrollTo(0, 0);
 
   return(
     <div id = "dashboard">
