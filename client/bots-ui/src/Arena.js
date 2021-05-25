@@ -1,6 +1,7 @@
 import './Arena.css';
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import Sprite from './Sprite';
 
 async function downloadBot(bot1, bot2) {
     var res = await axios({
@@ -32,7 +33,9 @@ export default function Arena() {
     const [gameStates, setGameStates] = useState();
     const [winner, setWinner] = useState();
     const [boards, setBoards] = useState();
-    var x = 0;
+    const [tileMap, setTileMap] = useState();
+    let x = 0;
+    const generalScale = 1;
 
     let handleSubmit = () => {
         setFightStarted(true);
@@ -63,62 +66,115 @@ export default function Arena() {
         return <tr>{row}</tr>;
     }
 
+    let cellToSprite = (cell) => {
+        if (cell.hq == 1) {
+            if (cell.faction == 1)
+                return  <Sprite data = {{x:256, y:64, h:32, w:32}} 
+                image = '/sprites/grasslands_2.png' 
+                position = {{x:cell.x*60, y:cell.y*60}} 
+                number = {cell.no_soldiers}
+                scale = {generalScale*1.2}
+                />
+            else if (cell.faction == 2)
+                return  <Sprite data = {{x:224, y:64, h:32, w:32}} 
+                image = '/sprites/grasslands_2.png' 
+                position = {{x:cell.x*60, y:cell.y*60}} 
+                number = {cell.no_soldiers}
+                scale = {generalScale*1.2}
+                />
+        } else if (cell.tower == 1) {
+            if (cell.faction == 1)
+                return  <Sprite data = {{x:160, y:64, h:32, w:32}} 
+                image = '/sprites/grasslands_2.png' 
+                position = {{x:cell.x*60, y:cell.y*60}} 
+                number = {cell.no_soldiers}
+                scale = {generalScale*1.2}
+                />
+            else if (cell.faction == 2)
+                return  <Sprite data = {{x:128, y:64, h:32, w:32}} 
+                image = '/sprites/grasslands_2.png' 
+                position = {{x:cell.x*60, y:cell.y*60}} 
+                number = {cell.no_soldiers}
+                scale = {generalScale*1.2}
+                />
+            else
+                return  <Sprite data = {{x:194, y:64, h:32, w:32}} 
+                image = '/sprites/grasslands_2.png' 
+                position = {{x:cell.x*60, y:cell.y*60}} 
+                number = {cell.no_soldiers}
+                scale = {generalScale*1.2}
+                />
+        }
+
+        if (cell.faction == 1)
+            return  <Sprite data = {{x:0, y:0, h:32, w:32}} 
+            image = '/sprites/m1.png' 
+            position = {{x:cell.x*60, y:cell.y*60}} 
+            number = {cell.no_soldiers}
+            scale = {generalScale*1}
+            />
+        else if (cell.faction == 2)
+            return  <Sprite data = {{x:0, y:0, h:32, w:32}} 
+            image = '/sprites/m2.png' 
+            position = {{x:cell.x*60, y:cell.y*60}} 
+            number = {cell.no_soldiers}
+            scale = {generalScale*1}
+            />
+        else
+            return null;
+
+    }
+
+    let cellToBackground = (cell) => {
+        return  <Sprite data = {{x:0, y:64, h:32, w:32}} 
+        image = '/sprites/grasslands_2.png' 
+        position = {{x:cell.x*60, y:cell.y*60}}
+        scale = {generalScale*2} 
+        />
+    }
+
     let handleOnClick = async () => {
         var res = await playGame();
         setGameStates(res.states);
         setWinner(res.winner);
-        setSimulationStarted(true);
 
         console.log(res.states);
         var final = {};
         for (let k = 0; k < res.states.length; ++k) {
             let board = res.states[k];
             final[k] = [];
+            let grid = [];
             for (let i = 0; i < board.length; ++i) {
-                final[k][i] = board[i].map(cell => cellToTable(cell));
-                console.log(final[k][i]);
+                //final[k][i] = board[i].map(cell => cellToTable(cell));
+                grid = grid.concat(board[i].map(cell => cellToBackground(cell)));
+                grid = grid.concat(board[i].map(cell => cellToSprite(cell)));
             }
-            final[k] = final[k].map(row => rowToTable(row));
+            final[k] = grid;
         }
-        console.log(final);
-        setBoards(final);
+        //setBoards(final);
+        setTileMap(final);
+
+        setSimulationStarted(prev => !prev);
+
+        setStateIdx(0);
+        requestRef.current = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(requestRef.current);
     }
 
-    // let update = () => {
-    //     setStateIdx(stateIdx + 1);
-    //     window.requestAnimationFrame(update);
-    // }
 
     const requestRef = useRef();
     const previousTimeRef = useRef();
   
-    const animate = async time => {
+    const animate = time => {
         if (previousTimeRef.current != undefined) {
-            const deltaTime = time - previousTimeRef.current;
-            
-            // Pass on a function to the setter of the state
-            // to make sure we always have the latest state
-            //if (simulationStarted) {
-                //await setStateIdx(stateIdx + 1);
-            //}
-            if (simulationStarted) {
-                console.log(x);
-                //setStateIdx(stateIdx + 1);
-                x += 1;
-            } else {
-                setStateIdx(0);
-                x = 0;
-            }
+          const deltaTime = time - previousTimeRef.current;
+          
+          setStateIdx(prevIdx => (prevIdx + deltaTime * 0.001) % 20);
         }
         previousTimeRef.current = time;
-        requestRef.current = await requestAnimationFrame(animate);
-    }
-  
-    useEffect(() => {
-        x = 0;
         requestRef.current = requestAnimationFrame(animate);
-        return () => cancelAnimationFrame(requestRef.current);
-    }, []);
+      }
+  
 
     return(
         <section id = "Arena">
@@ -141,7 +197,9 @@ export default function Arena() {
                 </div> : 
                     <div className="game-wrapper">
                         {!simulationStarted ? <button onClick = {handleOnClick}> Start Simulation </button> :
-                                                        (boards ? <table><tbody>{boards[x < 20 ? x : 0]}</tbody></table> : <p> Loading... </p>)}
+                                                        //(boards ? <table><tbody>{boards[Math.floor(stateIdx)]}</tbody></table> : <p> Loading... </p>)
+                                                        tileMap ? tileMap[Math.floor(stateIdx)] : <p> Loading.. </p>
+                                                        }
                     </div>
                 }
             </div>
