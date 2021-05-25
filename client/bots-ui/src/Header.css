@@ -4,6 +4,11 @@ header {
     /* display: flex;
     flex-direction: row; */
     background-color: rgb(74, 103, 146);
+    padding: 3% 0 3% 0;
+    transition: all 1s ease;
+}
+
+header.start {
     padding: 25% 0 25% 0;
 }
 
@@ -13,7 +18,7 @@ header > h1 {
     font-family: 'Garamond', cursive;
     font-size: 4em;
     position: relative;
-    left: 44vw;
+    left: 40vw;
     margin: 0;
 }
 
