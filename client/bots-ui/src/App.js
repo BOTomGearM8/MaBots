@@ -50,6 +50,8 @@ function App() {
                                                 loginSubmitted = {loginSubmitted} ></Login>}
       {headerState === 'registerClicked' && <CreateAccount setToken={setToken}></CreateAccount>}
       {headerState === 'profileClicked' && <Profile setToken={setToken}></Profile>}
+
+      <footer> &copy; BottomGear 2021 </footer>
     </div>
   );
 }

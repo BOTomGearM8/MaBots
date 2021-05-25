@@ -5,7 +5,7 @@ export default function Documentation() {
         <section id = "Documentation">
             <div className = "wrapper">
             <h2>Welcome to the Documentation section!</h2>
-                <p><br/></p>
+                <br/>
                 <h3>The Game:</h3>
                 <p>First we will start by explaining this season&apos;s game: Go Tower Or Go HQ</p>
                 <p>The game is represented by a 5x5 board with multiple types of cells.</p>
