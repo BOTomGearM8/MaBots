@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-scroll'
 import PropTypes from 'prop-types';
 
 import './Login.css';
@@ -20,7 +21,7 @@ export default function Login(props) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const token = await loginUser({
+    const token = loginUser({
       username,
       password
     });
@@ -30,7 +31,8 @@ export default function Login(props) {
 
   return(
     <div className="login-wrapper">
-      <h1>Please Log In</h1>
+      <Link activeClass="active" to="login-h1" spy={true} smooth={true}/>
+      <h1 id="login-h1">Please Log In</h1>
       <form onSubmit={handleSubmit}>
         <label>
           <p>Username</p>

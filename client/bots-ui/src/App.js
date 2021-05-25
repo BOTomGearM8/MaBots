@@ -44,10 +44,12 @@ function App() {
               token = {token}  toRegister = {toRegister}
               toProfile = {toProfile} doLogout = {doLogout}
               toStart = {toStart}/>
-      {headerState === 'start' && <Dashboard dashboardState = {dashboardState}
-                                             setDashboardState = {setDashboardState}/>}
-      {headerState === 'loginClicked' && <Login setToken={setToken} 
-                                                loginSubmitted = {loginSubmitted} ></Login>}
+      {['start', 'doc', 'arena'].includes(headerState) && <Dashboard dashboardState = {dashboardState}
+                                             setDashboardState = {setDashboardState}
+                                             headerState = {headerState}
+                                             setHeaderState = {setHeaderState}/>}
+      {headerState === 'loginClicked' && <Login setToken={setToken}
+                                                loginSubmitted = {loginSubmitted} ><a href="login-start"></a></Login>}
       {headerState === 'registerClicked' && <CreateAccount setToken={setToken}></CreateAccount>}
       {headerState === 'profileClicked' && <Profile setToken={setToken}></Profile>}
 
