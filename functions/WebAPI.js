@@ -40,6 +40,13 @@ app.use('/signup', (req, res) => {
       response.token = token
     })
 
+    // Default role of user is non admin
+    fileStorage.admin.auth().getUserByEmail(email).then(user => {
+      fileStorage.admin.auth().setCustomUserClaims(user.uid, {
+        admin: false
+      })
+    })
+
     cred.user.updateProfile({
       displayName: username
     }).then(function() {
@@ -106,7 +113,7 @@ app.use('/make-unadmin', (req, res) => {
   })
 });
 
-app.use('/user-type', (req, res) => {
+app.use('/is-admin', (req, res) => {
   const email = req.body.email
 
   fileStorage.admin.auth().getUserByEmail(email).then(user => {
