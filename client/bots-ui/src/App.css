@@ -19,6 +19,7 @@ html, body {
 footer {
   position: relative;
   bottom: 15px;
+  margin-top: 5%;
   height: 5%;
   text-align: center;
   font-size: x-large;

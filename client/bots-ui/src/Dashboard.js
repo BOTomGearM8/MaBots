@@ -55,19 +55,13 @@ export default function Dashboard(props) {
 
       {/* if Documentation button was clicked */}
       {props.dashboardState === 'doc' && 
-        <section>
-          <div className = "wrapper">
             <Documentation/>
-          </div>
-        </section>}
+      }
 
       {/* if Arena button was clicked */}
       {props.dashboardState === 'arena' && 
-        <section>
-          <div className = "wrapper">
             <Arena/>
-          </div>
-        </section>}
+      }
     </div>
   );
 }

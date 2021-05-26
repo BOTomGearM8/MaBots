@@ -4,9 +4,9 @@ export default function Documentation() {
     return(
         <section id = "Documentation">
             <div className = "wrapper">
-                <h2>Welcome to the Documentation section!</h2>
-                <br/>
-
+                <h2><i>Go Tower Or Go HQ</i></h2>
+            </div>
+            <div className = "wrapper">
                 <div className="doc-tile" id="the-game">
                     <h3>The Game</h3>
                     <p>The game is represented by a 5x5 board with multiple types of cells.</p>
@@ -25,13 +25,10 @@ export default function Documentation() {
                         <li>Move one soldier in any adjacent cell (N, NE, E, SE, S, SV, V, NV)</li>
                     </ul>
                     <p>&nbsp;</p>
-                    {/* <p>&nbsp;</p> */}
                 </div>
 
-                {/* <p>&nbsp;</p> */}
                 <div className="doc-tile" id="the-goal">
                     <h3>The Goal</h3>
-                    <p><i>Go Tower Or Go HQ</i></p>
                     <p>The goal of the game is to either take the enemys HQ or to have 2 towers more than your opponet.</p>
                     <p>In order for you to do this you need to strategically move and create soldiers so that you can</p>
                     <p>capture the towers onthe map or the base of your enemy.</p>

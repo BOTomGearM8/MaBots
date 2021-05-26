@@ -1,23 +1,31 @@
 #Documentation > .wrapper {
     box-sizing: border-box;  /* padding doesn't affect the h/w */
     padding: 0 5vw 0 5vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
 }
 
 .doc-tile {
     height: auto;
     width: 25%;
-    position: absolute;
-    display: inline-block;
+    position: relative;
+    background-color: rgb(74, 103, 146);
+    color: #fffff0;
+    box-sizing: border-box;
+    padding: 0 25px 0 25px;
 }
 
 .doc-tile > h3 {
     font-size: 2em;
+    text-align: center;
+}
+
+#the-game {
 }
 
 #the-goal {
-    left: calc(25vw + 15vw);
 }
 
 #the-doc {
-    left: calc(50vw + 30vw);
 }
