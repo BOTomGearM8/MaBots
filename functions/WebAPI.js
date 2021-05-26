@@ -21,27 +21,6 @@ db.auth.onAuthStateChanged(user => {
   }
 })
 
-// Login endpoint
-app.use('/login', (req, res) => {
-  var jsonObj = {"token1" : "tokenVal"};
-  
-  console.log(req.body)
-
-  db.database.ref("customPath").set(jsonObj, function(error) {
-    if (error) {
-      // The write failed...
-      console.log("Failed with error: " + error)
-    } else {
-      // The write was successful...
-      console.log("success")
-    }
-  });
-
-  res.send({
-    token: 'test123'
-  });
-});
-
 app.use('/signup', (req, res) => {
   console.log(req.body)
 
@@ -80,7 +59,7 @@ app.use('/logout', (req, res) => {
   })
 });
 
-app.use('/login-dev', (req, res) => {
+app.use('/login', (req, res) => {
   const email = req.body.email
   const password = req.body.password
 
@@ -92,15 +71,14 @@ app.use('/login-dev', (req, res) => {
   db.auth.signInWithEmailAndPassword(email, password).then(cred => {
     cred.user.getIdTokenResult().then((token) => {
       response.token = token
-    })
-    response.username = cred.user.displayName
-
-    res.send(response)
+      response.username = cred.user.displayName
+      res.send(response)
+    })    
   
   }, function(error) {
 
     console.log(error.message)
-    res.send('fail')
+    res.send({error:"fail"})
   })
 });
 

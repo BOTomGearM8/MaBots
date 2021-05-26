@@ -88,6 +88,8 @@ class GridCell {
                         this.faction = 0;
                         return 2;
                     }
+                } else {
+                    this.faction = 0;
                 }
             }
         }
