@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-scroll'
 import PropTypes from 'prop-types';
 
 import './Login.css';
@@ -24,24 +25,26 @@ export default function Login(props) {
       username,
       password
     });
+    console.log(token);
     props.setToken(token, username);
     props.loginSubmitted();
   }
 
   return(
     <div className="login-wrapper">
-      <h1>Please Log In</h1>
-      <form onSubmit={handleSubmit}>
+      <Link activeClass="active" to="login-h1" spy={true} smooth={true}/>
+      <h1 id="login-h1">Please Log In</h1>
+      <form className="login-form" onSubmit={handleSubmit}>
         <label>
           <p>Username</p>
-          <input type="text" onChange={e => setUserName(e.target.value)}/>
+          <input className = "login-input" type="text" onChange={e => setUserName(e.target.value)}/>
         </label>
         <label>
           <p>Password</p>
-          <input type="password" onChange={e => setPassword(e.target.value)}/>
+          <input className = "login-input" type="password" onChange={e => setPassword(e.target.value)}/>
         </label>
         <div>
-          <button type="submit">Submit</button>
+          <button className = "login-button" type="submit">Submit</button>
         </div>
       </form>
     </div>

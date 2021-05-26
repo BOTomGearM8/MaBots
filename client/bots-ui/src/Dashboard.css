@@ -30,12 +30,13 @@ section > .wrapper > p#motto {
 
 section > button {
     border: none;
-    color: white;
+    color: #fffff0;
     font-size: 2.5em;
     height: 39vh;
     width: 39vw;
     position: absolute;
     border-radius: 5%;
+    margin-bottom: 10%;
 }
 
 .book {

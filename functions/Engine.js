@@ -1,7 +1,7 @@
-const ps = require("prompt-sync");
-const skel = require("./skel");
-const bot1 = require("./bot1");
-const bot2 = require("./bot2");
+const ps = require("prompt-sync");      // Used for stdin input 
+const skel = require("./skel");         // The required classes
+const bot1 = require("./bot1");         // Bot of player 1
+const bot2 = require("./bot2");         // Bot of player 2
 
 const prompt = ps();    // Used for user input
 
@@ -11,9 +11,10 @@ var gameStates = []     // Game states history
 var round = 0;          // Current round
 var gameOver = 0;       // Game over condition
 var boardSize = 5;      // Size of game board
-var no_sold_start = 2;
-var round_to_tie = 20;
-var noTowersPlayer1, noTowersPlayer2;
+var no_sold_start = 2;  // Number of soldiers in HQ at the start
+var round_to_tie = 20;  // Number of rounds until game ends in tie
+var noTowersPlayer1,    // Number of towers for player1 
+    noTowersPlayer2;    // Number of towers for player2
 
 
 // Creates the same board each time
@@ -89,7 +90,6 @@ function createBoard() {
     noTowersPlayer2 = 1;
 }
 
-// TO DO: read input from bots
 // Read action from input
 function getActionFromInput() {
     var actType;
@@ -118,6 +118,7 @@ function getActionFromInput() {
 function getPlayerActions() {
     console.log("Actions:\n\t'm' for moving soldier\n\t'c' for creating soldier\n");
     
+    // Get first action
     console.log("Action 1: ");
     var action1 = getActionFromInput();
 
@@ -125,6 +126,7 @@ function getPlayerActions() {
         return -1;
     }
 
+    // Get second action
     console.log("Action 2: ");
     var action2 = getActionFromInput();
 
@@ -233,16 +235,20 @@ function processAction(action, curPlayer) {
     
     // If move action
     } else {
+        // Take soldier from starting cell
         ret_val = board[action.x1][action.y1].removeOneSoldier();
         
+        // Check if any tower was left empty
         if (ret_val == 1) {
             noTowersPlayer1--;
         } else if (ret_val == 2) {
             noTowersPlayer2--;
         }
         
+        // Add soldier to destination cell
         ret_val = board[action.x2][action.y2].addFactionSoldier(curPlayer);
         
+        // Check if HQ or tower captured
         if (ret_val == skel.GridCell.HQ_TAKEN) {
             gameOver = curPlayer;
         } else if (ret_val == 1) {
@@ -255,6 +261,7 @@ function processAction(action, curPlayer) {
             noTowersPlayer2--;
         }
 
+        // Check if game ends becuase of tower difference
         checkTowersNo();
     }
 }
@@ -268,12 +275,14 @@ function processTurn(playerActions, curPlayer) {
     processAction(action2, curPlayer);
 }
 
+// Print history of board states
 function printGameStates() {
     for (let i = 0; i < round; i++) {
         printBoard(gameStates[i]);
     }
 }
 
+// Add game state to history array
 function addGameState() {
     gameStates[round] = []
     for (let i = 0; i < boardSize; i++) {
@@ -291,7 +300,12 @@ function addGameState() {
     }
 }
 
-// Main function of the game
+/** 
+ * Main function of the game
+ *
+ * @returns json containing the winner of the game
+ *          and the history of the match
+ */
 function engine() {
     var curPlayer = 2;
 
@@ -299,8 +313,9 @@ function engine() {
     // createStandardBoard();
     createBoard();
 
+    // Bots of players
     var player1 = new bot1.MaBot(1, 0, 0, no_sold_start, board);
-    var player2 = new bot1.MaBot(2, 4, 4, no_sold_start, board);
+    var player2 = new bot2.MaBot(2, 4, 4, no_sold_start, board);
 
     var playerActions;
     
@@ -308,6 +323,7 @@ function engine() {
         // Switch player
         curPlayer ^= 1 ^ 2;
         
+        // Add game state to history
         addGameState();
 
         // Increment round
@@ -326,6 +342,7 @@ function engine() {
         // Get actions form player
         // playerActions = getPlayerActions();
 
+        // Check which player needs to move
         if (curPlayer == 1) {
             playerActions = player1.getPlayerActions();
         } else {
@@ -343,7 +360,7 @@ function engine() {
         processTurn(playerActions, curPlayer);
     }
 
-    // Game over
+    /* Game over */
     
     // Check if TIE
     if (round == round_to_tie) {
@@ -357,6 +374,7 @@ function engine() {
             states: gameStates
         }
 
+    // Print victory message
     } else {
         process.stdout.write("\nGAME OVER IN ROUND: " + round + " ! PLAYER ");
         if (gameOver == 1) {

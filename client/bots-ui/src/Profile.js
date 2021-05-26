@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './Profile.css';
 
 async function fetchBot(user) {
     var res = await axios({
@@ -70,12 +71,12 @@ export default function Profile() {
 
     return (
         <div className="profile-wrapper">
-            <h1> {user} </h1>
+            <h1 className = "username"> {user} </h1>
             <h2> My Bot </h2>
             <div>
                 {isLoading ? <p> No bot added.. </p> : <p> {botName} </p>}
                 <input type="file" onChange={onFileChange} /> 
-                <button onClick={onFileUpload}> 
+                <button className = "upload-button" onClick={onFileUpload}> 
                   Upload bot
                 </button> 
             </div>

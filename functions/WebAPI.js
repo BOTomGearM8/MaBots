@@ -1,21 +1,36 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const dbConfig = require('./DataBaseConfig');
+const db = require('./DataBaseConfig');
 const fileStorage = require('./FileStorage.js');
+const game = require('./Engine.js');
 const bodyParser = require('body-parser');
 const multer = require('multer');
+const { auth } = require('firebase-admin');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.json());
 
+db.auth.onAuthStateChanged(user => {
+  if (user) {
+    // console.log('User logged in: ', user.getIdTokenResult())
+    user.getIdTokenResult().then((token) => {
+      console.log('User logged in: ', token)
+    })
+  } else {
+    console.log('User logged out');
+  }
+})
+
 // Login endpoint
 app.use('/login', (req, res) => {
   var jsonObj = {"token1" : "tokenVal"};
   
-  dbConfig.database.ref("customPath").set(jsonObj, function(error) {
+  console.log(req.body)
+
+  db.database.ref("customPath").set(jsonObj, function(error) {
     if (error) {
       // The write failed...
       console.log("Failed with error: " + error)
@@ -23,11 +38,49 @@ app.use('/login', (req, res) => {
       // The write was successful...
       console.log("success")
     }
-});
+  });
 
   res.send({
     token: 'test123'
   });
+});
+
+app.use('/signup', (req, res) => {
+  console.log(req.body)
+
+  const email = req.body.email
+  const username = req.body.username
+  const password = req.body.password
+
+  db.auth.createUserWithEmailAndPassword(email, password).then(cred => {
+    cred.user.updateProfile({
+      displayName: username
+    }).then(function() {
+      res.send('Success');
+    }, function(error) {
+      res.send('Fail on username change');
+    }, function(error) {
+      res.send('Fail on create user');
+    })
+  });
+});
+
+app.use('/logout', (req, res) => {
+  db.auth.signOut().then(() => {
+    res.send('user loged out')
+  })
+});
+
+app.use('/login-dev', (req, res) => {
+  const email = req.body.email
+  const password = req.body.password
+
+  db.auth.signInWithEmailAndPassword(email, password).then(cred => {
+    res.send('success')
+  }, function(error) {
+    console.log(error.message)
+    res.send('fail')
+  })
 });
 
 // Fetch all files related to a user
@@ -137,9 +190,31 @@ app.post('/upload', uploader.single('image'), async (req, res, next) => {
 });
 
 
+// Download file by username
+app.post ('/download', async (req, res) => {
+  let destFilename = './exp-bot1.js';
+  var options = {
+    // The path to which the file should be downloaded, e.g. "./file.txt"
+    destination: destFilename,
+  };
+
+  // Downloads the file
+  await fileStorage.bucket.file(req.body.filename1).download(options);
+  console.log("First bot downloaded");
+
+  destFilename = './exp-bot2.js';
+  options = {
+    destination: destFilename,
+  };
+  await fileStorage.bucket.file(req.body.filename1).download(options);
+  console.log("Second bot downloaded");
+});
+
+
 // Start engine and return game states
 app.post('/play', async (req, res) => {
-
+  res.send(game.engine());
 });
+
 
 app.listen(8080, () => console.log('API is running on http://localhost:8080/'));

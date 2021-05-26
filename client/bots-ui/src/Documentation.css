@@ -1,0 +1,23 @@
+#Documentation > .wrapper {
+    box-sizing: border-box;  /* padding doesn't affect the h/w */
+    padding: 0 5vw 0 5vw;
+}
+
+.doc-tile {
+    height: auto;
+    width: 25%;
+    position: absolute;
+    display: inline-block;
+}
+
+.doc-tile > h3 {
+    font-size: 2em;
+}
+
+#the-goal {
+    left: calc(25vw + 15vw);
+}
+
+#the-doc {
+    left: calc(50vw + 30vw);
+}
