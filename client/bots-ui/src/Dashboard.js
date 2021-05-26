@@ -33,27 +33,41 @@ export default function Dashboard(props) {
       
       {props.dashboardState === 'start' &&
         <section id = "doc-section">
-          <button className = "btn" onClick = {toDoc}>
-            <BookOutlined className="book"/>
-            <div id = "doc">Documentation</div>
-          </button>
+          <div className = "wrapper">
+            <button className = "btn" onClick = {toDoc}>
+              <BookOutlined className="book"/>
+              <div id = "doc">Documentation</div>
+            </button>
+            </div>
         </section> 
       }
       
       {props.dashboardState === 'start' &&
         <section id = "arena-section">
-          <button className = "btn" onClick = {toArena}>
-            <RobotOutlined className="robot"/>
-            <div id = "arena">Arena</div>
-          </button>
+          <div className = "wrapper">
+            <button className = "btn" onClick = {toArena}>
+              <RobotOutlined className="robot"/>
+              <div id = "arena">Arena</div>
+            </button>
+          </div>
         </section>
       }
 
       {/* if Documentation button was clicked */}
-      {props.dashboardState === 'doc' && <Documentation/>}
+      {props.dashboardState === 'doc' && 
+        <section>
+          <div className = "wrapper">
+            <Documentation/>
+          </div>
+        </section>}
 
       {/* if Arena button was clicked */}
-      {props.dashboardState === 'arena' && <Arena/>}
+      {props.dashboardState === 'arena' && 
+        <section>
+          <div className = "wrapper">
+            <Arena/>
+          </div>
+        </section>}
     </div>
   );
 }
