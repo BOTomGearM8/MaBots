@@ -21,10 +21,11 @@ export default function Login(props) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const token = loginUser({
+    const token = await loginUser({
       username,
       password
     });
+    console.log(token);
     props.setToken(token, username);
     props.loginSubmitted();
   }
@@ -33,17 +34,17 @@ export default function Login(props) {
     <div className="login-wrapper">
       <Link activeClass="active" to="login-h1" spy={true} smooth={true}/>
       <h1 id="login-h1">Please Log In</h1>
-      <form onSubmit={handleSubmit}>
+      <form className="login-form" onSubmit={handleSubmit}>
         <label>
           <p>Username</p>
-          <input type="text" onChange={e => setUserName(e.target.value)}/>
+          <input className = "login-input" type="text" onChange={e => setUserName(e.target.value)}/>
         </label>
         <label>
           <p>Password</p>
-          <input type="password" onChange={e => setPassword(e.target.value)}/>
+          <input className = "login-input" type="password" onChange={e => setPassword(e.target.value)}/>
         </label>
         <div>
-          <button type="submit">Submit</button>
+          <button className = "login-button" type="submit">Submit</button>
         </div>
       </form>
     </div>

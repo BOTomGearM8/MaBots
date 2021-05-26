@@ -14,7 +14,7 @@ export default function Sprite({image, data, position, number, scale}) {
                 backgroundImage: `url(${image})`,
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: `-${x}px -${y}px`,
-                transform: `scale(${scale})`,
+                transform: `scale(${scale})`
             }}
         > <p style={{paddingLeft: "25px"}}> {number} </p> </div>
     );

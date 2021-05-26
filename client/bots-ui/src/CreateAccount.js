@@ -36,21 +36,21 @@ export default function CreateAccount({ setToken }) {
   return(
     <div className="register-wrapper">
       <h1>Create your account</h1>
-      <form onSubmit={handleSubmit}>
+      <form className = "sign-form" onSubmit={handleSubmit}>
         <label>
           <p>Username</p>
-          <input type="text" onChange={e => setUserName(e.target.value)}/>
+          <input className = "sign-input" type="text" onChange={e => setUserName(e.target.value)}/>
         </label>
         <label>
           <p>Password</p>
-          <input type="password" onChange={e => setPassword(e.target.value)}/>
+          <input className = "sign-input" type="password" onChange={e => setPassword(e.target.value)}/>
         </label>
         <label>
           <p>Password Confirmation</p>
-          <input type="password" onChange={e => setPasswordConfirmation(e.target.value)}/>
+          <input className = "sign-input" type="password" onChange={e => setPasswordConfirmation(e.target.value)}/>
         </label>
         <div>
-          <button type="submit">Submit</button>
+          <button className = "sign-button" type="submit">Submit</button>
         </div>
       </form>
     </div>
