@@ -18,32 +18,38 @@ async function loginUser(credentials) {
 export default function Login(props) {
   const [username, setUserName] = useState();
   const [password, setPassword] = useState();
+  const [email, setEmail] = useState();
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const token = await loginUser({
-      username,
+    const resp = await loginUser({
+      email,
       password
     });
-    props.setToken(token, username);
-    props.loginSubmitted();
+    console.log(resp);
+    if (resp.error === "fail") {
+      alert("User or password incorrect");
+    } else {
+      props.setToken(resp.token, resp.username);
+      props.loginSubmitted();
+    }
   }
 
   return(
     <div className="login-wrapper">
       <Link activeClass="active" to="login-h1" spy={true} smooth={true}/>
       <h1 id="login-h1">Please Log In</h1>
-      <form onSubmit={handleSubmit}>
+      <form className="login-form" onSubmit={handleSubmit}>
         <label>
-          <p>Username</p>
-          <input type="text" onChange={e => setUserName(e.target.value)}/>
+          <p>E-mail</p>
+          <input className = "login-input" type="text" onChange={e => setEmail(e.target.value)}/>
         </label>
         <label>
           <p>Password</p>
-          <input type="password" onChange={e => setPassword(e.target.value)}/>
+          <input className = "login-input" type="password" onChange={e => setPassword(e.target.value)}/>
         </label>
         <div>
-          <button type="submit">Submit</button>
+          <button className = "login-button" type="submit">Submit</button>
         </div>
       </form>
     </div>

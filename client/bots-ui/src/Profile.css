@@ -1,24 +1,17 @@
-.register-wrapper {
+.profile-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    margin-left: 5%;
     margin-top: 5%;
 }
 
-.sign-form {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
+.username {
+    margin-left: 20px;
+    color: rgb(74, 103, 146);
+    font-size: 40px;
 }
 
-.sign-input {
-    padding:10px;
-    border: 10px;;
-    box-shadow:0 0 15px 4px rgba(0,0,0,0.2);
-}
-
-.sign-button {
+.upload-button {
     display: inline-block;
     padding: 0.35em 1.2em;
     border:0.1em solid #FFFFFF;
@@ -37,7 +30,7 @@
     cursor: pointer;
 }
 
-.sign-button:hover {
+.upload-button:hover {
     color:#000000;
     background-color:#FFFFFF;
 }

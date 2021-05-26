@@ -1,6 +1,5 @@
 const firebase = require('firebase')
 
-
 const firebaseConfig = {
   apiKey: "AIzaSyAVa8jpyTBu4sy36kPXd1G2H_2MGEv92Ms",
   authDomain: "mabots-cb557.firebaseapp.com",
@@ -10,6 +9,10 @@ const firebaseConfig = {
   messagingSenderId: "723047465072",
   appId: "1:723047465072:web:6cb15e5231cb6ac794b4b5",
   measurementId: "G-JNWWJWH025"
-};
+}
+
 firebase.initializeApp(firebaseConfig)
+
+exports.auth = firebase.auth()
+exports.fs = firebase.firestore()
 exports.database = firebase.database()

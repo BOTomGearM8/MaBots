@@ -2,6 +2,7 @@ import './Arena.css';
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Sprite from './Sprite';
+import { PlayCircleOutlined } from '@ant-design/icons';
 
 async function downloadBot(bot1, bot2) {
     var res = await axios({
@@ -34,7 +35,7 @@ export default function Arena() {
     const [winner, setWinner] = useState();
     const [boards, setBoards] = useState();
     const [tileMap, setTileMap] = useState();
-    let x = 0;
+    const [tileSize, setTileSize] = useState(0);
     const generalScale = 1;
 
     let handleSubmit = () => {
@@ -69,38 +70,38 @@ export default function Arena() {
     let cellToSprite = (cell) => {
         if (cell.hq == 1) {
             if (cell.faction == 1)
-                return  <Sprite data = {{x:256, y:64, h:32, w:32}} 
+                return  <Sprite data = {{x:224, y:64, h:32, w:32}} 
                 image = '/sprites/grasslands_2.png' 
-                position = {{x:cell.x*60, y:cell.y*60}} 
+                position = {{x:cell.y*60, y:cell.x*60}} 
                 number = {cell.no_soldiers}
                 scale = {generalScale*1.2}
                 />
             else if (cell.faction == 2)
-                return  <Sprite data = {{x:224, y:64, h:32, w:32}} 
+                return  <Sprite data = {{x:256, y:64, h:32, w:32}} 
                 image = '/sprites/grasslands_2.png' 
-                position = {{x:cell.x*60, y:cell.y*60}} 
+                position = {{x:cell.y*60, y:cell.x*60}} 
                 number = {cell.no_soldiers}
                 scale = {generalScale*1.2}
                 />
         } else if (cell.tower == 1) {
             if (cell.faction == 1)
-                return  <Sprite data = {{x:160, y:64, h:32, w:32}} 
+                return  <Sprite data = {{x:128, y:64, h:32, w:32}} 
                 image = '/sprites/grasslands_2.png' 
-                position = {{x:cell.x*60, y:cell.y*60}} 
+                position = {{x:cell.y*60, y:cell.x*60}} 
                 number = {cell.no_soldiers}
                 scale = {generalScale*1.2}
                 />
             else if (cell.faction == 2)
-                return  <Sprite data = {{x:128, y:64, h:32, w:32}} 
+                return  <Sprite data = {{x:160, y:64, h:32, w:32}} 
                 image = '/sprites/grasslands_2.png' 
-                position = {{x:cell.x*60, y:cell.y*60}} 
+                position = {{x:cell.y*60, y:cell.x*60}} 
                 number = {cell.no_soldiers}
                 scale = {generalScale*1.2}
                 />
             else
                 return  <Sprite data = {{x:194, y:64, h:32, w:32}} 
                 image = '/sprites/grasslands_2.png' 
-                position = {{x:cell.x*60, y:cell.y*60}} 
+                position = {{x:cell.y*60, y:cell.x*60}} 
                 number = {cell.no_soldiers}
                 scale = {generalScale*1.2}
                 />
@@ -109,14 +110,14 @@ export default function Arena() {
         if (cell.faction == 1)
             return  <Sprite data = {{x:0, y:0, h:32, w:32}} 
             image = '/sprites/m1.png' 
-            position = {{x:cell.x*60, y:cell.y*60}} 
+            position = {{x:cell.y*60, y:cell.x*60}} 
             number = {cell.no_soldiers}
             scale = {generalScale*1}
             />
         else if (cell.faction == 2)
             return  <Sprite data = {{x:0, y:0, h:32, w:32}} 
             image = '/sprites/m2.png' 
-            position = {{x:cell.x*60, y:cell.y*60}} 
+            position = {{x:cell.y*60, y:cell.x*60}} 
             number = {cell.no_soldiers}
             scale = {generalScale*1}
             />
@@ -128,7 +129,7 @@ export default function Arena() {
     let cellToBackground = (cell) => {
         return  <Sprite data = {{x:0, y:64, h:32, w:32}} 
         image = '/sprites/grasslands_2.png' 
-        position = {{x:cell.x*60, y:cell.y*60}}
+        position = {{x:cell.y*60, y:cell.x*60}}
         scale = {generalScale*2} 
         />
     }
@@ -153,6 +154,8 @@ export default function Arena() {
         }
         //setBoards(final);
         setTileMap(final);
+        setTileSize(res.states.length);
+        console.log(res.states.length);
 
         setSimulationStarted(prev => !prev);
 
@@ -169,7 +172,7 @@ export default function Arena() {
         if (previousTimeRef.current != undefined) {
           const deltaTime = time - previousTimeRef.current;
           
-          setStateIdx(prevIdx => (prevIdx + deltaTime * 0.001) % 20);
+          setStateIdx(prevIdx => (prevIdx + deltaTime * 0.001) % 100);
         }
         previousTimeRef.current = time;
         requestRef.current = requestAnimationFrame(animate);
@@ -181,24 +184,32 @@ export default function Arena() {
             <div className = "wrapper">
                 <h2> Arena </h2>
                 {!fightStarted ? <div className = "form-wrapper">
-                    <form className = "form" onSubmit={handleSubmit}>
+                    <form className = "form-fight" onSubmit={handleSubmit}>
                         <label>
                         <p>Player 1</p>
-                        <input type="text" onChange = {e => setPlayer1(e.target.value)}/>
+                        <input className = "bot-input" type="text" 
+                                placeholder="Bot Name" onChange = {e => setPlayer1(e.target.value)}/>
                         </label>
                         <label>
                         <p>Player 2</p>
-                        <input type="text" onChange = {e => setPlayer2(e.target.value)}/>
+                        <input className = "bot-input" type="text" 
+                            placeholder="Bot Name" onChange = {e => setPlayer2(e.target.value)}/>
                         </label>
                         <div>
-                        <button type="submit">Fight</button>
+                        <button className = "fight-button"  type="submit">Fight</button>
                         </div>
                     </form>
                 </div> : 
                     <div className="game-wrapper">
-                        {!simulationStarted ? <button onClick = {handleOnClick}> Start Simulation </button> :
+                        {!simulationStarted ? <button className = "sim-button" onClick = {handleOnClick}> <PlayCircleOutlined className = "play" /> 
+                                                                                                        <p> Start Simulation </p> </button> :
                                                         //(boards ? <table><tbody>{boards[Math.floor(stateIdx)]}</tbody></table> : <p> Loading... </p>)
-                                                        tileMap ? tileMap[Math.floor(stateIdx)] : <p> Loading.. </p>
+                                                        tileMap ? (Math.floor(stateIdx) < tileSize ?
+                                                                    tileMap[Math.floor(stateIdx)] :
+                                                                    [tileMap[tileSize-1],
+                                                                    (winner == 0 ? <h1> It's a tie! </h1> :
+                                                                                    <h1> Player {winner} won! </h1>)])
+                                                        : <p> Loading.. </p>
                                                         }
                     </div>
                 }

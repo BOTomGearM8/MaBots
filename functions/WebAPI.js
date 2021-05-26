@@ -1,33 +1,126 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const dbConfig = require('./DataBaseConfig');
+const db = require('./DataBaseConfig');
 const fileStorage = require('./FileStorage.js');
 const game = require('./Engine.js');
 const bodyParser = require('body-parser');
 const multer = require('multer');
+const { auth } = require('firebase-admin');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.json());
 
-// Login endpoint
-app.use('/login', (req, res) => {
-  var jsonObj = {"token1" : "tokenVal"};
-  
-  dbConfig.database.ref("customPath").set(jsonObj, function(error) {
-    if (error) {
-      // The write failed...
-      console.log("Failed with error: " + error)
-    } else {
-      // The write was successful...
-      console.log("success")
-    }
+db.auth.onAuthStateChanged(user => {
+  if (user) {
+    console.log('User logged in: ', user.displayName)
+  } else {
+    console.log('User logged out');
+  }
+})
+
+app.use('/signup', (req, res) => {
+  console.log(req.body)
+
+  const email = req.body.email
+  const username = req.body.username
+  const password = req.body.password
+
+  var response = {
+    token: "",
+    username: ""
+  }
+
+  response.username = username
+
+  db.auth.createUserWithEmailAndPassword(email, password).then(cred => {
+    cred.user.getIdTokenResult().then((token) => {
+      response.token = token
+    })
+
+    // Default role of user is non admin
+    fileStorage.admin.auth().getUserByEmail(email).then(user => {
+      fileStorage.admin.auth().setCustomUserClaims(user.uid, {
+        admin: false
+      })
+    })
+
+    cred.user.updateProfile({
+      displayName: username
+    }).then(function() {
+      // console.log(cred.user)
+      res.send(response);
+    }, function(error) {
+      res.send('Fail on username change');
+    })
+  }, function(error) {
+    res.send('Fail on create user');
+  });
 });
 
-  res.send({
-    token: 'test123'
+app.use('/logout', (req, res) => {
+  db.auth.signOut().then(() => {
+    res.send('user loged out')
+  })
+});
+
+app.use('/login', (req, res) => {
+  const email = req.body.email
+  const password = req.body.password
+
+  var response = {
+    token: "",
+    username: ""
+  }
+
+  db.auth.signInWithEmailAndPassword(email, password).then(cred => {
+    cred.user.getIdTokenResult().then((token) => {
+      response.token = token
+      response.username = cred.user.displayName
+      res.send(response)
+    })    
+  
+  }, function(error) {
+
+    console.log(error.message)
+    res.send({error:"fail"})
+  })
+});
+
+app.use('/make-admin', (req, res) => {
+  const email = req.body.email
+
+  fileStorage.admin.auth().getUserByEmail(email).then(user => {
+    fileStorage.admin.auth().setCustomUserClaims(user.uid, {
+      admin: true
+    })
+  }).then(() => {
+    res.send("Success! " + email + " is now an admin")
+  })
+});
+
+app.use('/make-unadmin', (req, res) => {
+  const email = req.body.email
+
+  fileStorage.admin.auth().getUserByEmail(email).then(user => {
+    fileStorage.admin.auth().setCustomUserClaims(user.uid, {
+      admin: false
+    })
+  }).then(() => {
+    res.send("Success! " + email + " is no longer an admin")
+  })
+});
+
+app.use('/is-admin', (req, res) => {
+  const email = req.body.email
+
+  fileStorage.admin.auth().getUserByEmail(email).then(user => {
+    fileStorage.admin.auth().getUser(user.uid).then((userData) => {
+      console.log(userData.customClaims['admin'])
+      res.send(userData.customClaims['admin'])
+    })
   });
 });
 

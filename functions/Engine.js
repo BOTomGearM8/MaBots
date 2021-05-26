@@ -12,7 +12,7 @@ var round = 0;          // Current round
 var gameOver = 0;       // Game over condition
 var boardSize = 5;      // Size of game board
 var no_sold_start = 2;  // Number of soldiers in HQ at the start
-var round_to_tie = 20;  // Number of rounds until game ends in tie
+var round_to_tie = 60;  // Number of rounds until game ends in tie
 var noTowersPlayer1,    // Number of towers for player1 
     noTowersPlayer2;    // Number of towers for player2
 
@@ -319,12 +319,11 @@ function engine() {
 
     var playerActions;
     
+    addGameState();
+    
     while (gameOver == 0 && round < round_to_tie) {
         // Switch player
         curPlayer ^= 1 ^ 2;
-        
-        // Add game state to history
-        addGameState();
 
         // Increment round
         round++;
@@ -358,6 +357,9 @@ function engine() {
 
         // Process actions
         processTurn(playerActions, curPlayer);
+
+        // Add game state to history
+        addGameState();
     }
 
     /* Game over */
