@@ -15,10 +15,7 @@ app.use(express.json());
 
 db.auth.onAuthStateChanged(user => {
   if (user) {
-    // console.log('User logged in: ', user.getIdTokenResult())
-    user.getIdTokenResult().then((token) => {
-      console.log('User logged in: ', token)
-    })
+    console.log('User logged in: ', user.displayName)
   } else {
     console.log('User logged out');
   }
@@ -59,9 +56,9 @@ app.use('/signup', (req, res) => {
       res.send('Success');
     }, function(error) {
       res.send('Fail on username change');
-    }, function(error) {
-      res.send('Fail on create user');
     })
+  }, function(error) {
+    res.send('Fail on create user');
   });
 });
 
@@ -76,7 +73,9 @@ app.use('/login-dev', (req, res) => {
   const password = req.body.password
 
   db.auth.signInWithEmailAndPassword(email, password).then(cred => {
-    res.send('success')
+    cred.user.getIdTokenResult().then((token) => {
+      res.send(token)
+    })
   }, function(error) {
     console.log(error.message)
     res.send('fail')
