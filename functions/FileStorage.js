@@ -9,3 +9,4 @@ admin.initializeApp({
 
 exports.bucket = admin.storage().bucket();
 exports.storage = admin.storage();
+exports.admin = admin;

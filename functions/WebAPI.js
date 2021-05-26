@@ -104,6 +104,41 @@ app.use('/login-dev', (req, res) => {
   })
 });
 
+app.use('/make-admin', (req, res) => {
+  const email = req.body.email
+
+  fileStorage.admin.auth().getUserByEmail(email).then(user => {
+    fileStorage.admin.auth().setCustomUserClaims(user.uid, {
+      admin: true
+    })
+  }).then(() => {
+    res.send("Success! " + email + " is now an admin")
+  })
+});
+
+app.use('/make-unadmin', (req, res) => {
+  const email = req.body.email
+
+  fileStorage.admin.auth().getUserByEmail(email).then(user => {
+    fileStorage.admin.auth().setCustomUserClaims(user.uid, {
+      admin: false
+    })
+  }).then(() => {
+    res.send("Success! " + email + " is no longer an admin")
+  })
+});
+
+app.use('/user-type', (req, res) => {
+  const email = req.body.email
+
+  fileStorage.admin.auth().getUserByEmail(email).then(user => {
+    fileStorage.admin.auth().getUser(user.uid).then((userData) => {
+      console.log(userData.customClaims['admin'])
+      res.send(userData.customClaims['admin'])
+    })
+  });
+});
+
 // Fetch all files related to a user
 app.post('/fetchUserFiles', async (req, res) => {
     var prefix = req.body.user;
