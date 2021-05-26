@@ -1,12 +1,15 @@
 section {
-    height: 100%;
+    height: auto;
     width: 100%;
 }
 section > .wrapper {
-    height: 100%;
-    width: 98%;
-    position: relative;
     margin-top: 5%;
+    overflow: visible;
+}
+
+#dashboard {
+    height: auto;
+    overflow: hidden;
 }
 
 section > .wrapper > h2 {
@@ -28,13 +31,13 @@ section > .wrapper > p#motto {
     justify-content: center;
 }
 
-section > button {
+.btn {
     border: none;
     color: #fffff0;
     font-size: 2.5em;
     height: 39vh;
     width: 39vw;
-    position: absolute;
+    position: relative;
     border-radius: 5%;
     margin-bottom: 10%;
 }
@@ -49,30 +52,27 @@ section > button {
     font-size: 1.5em;
 }
 
-section > button:hover {
+.btn:hover {
     color:peru;
     cursor: pointer;
 }
 
-section#doc-section > button {
+section#doc-section > .wrapper > .btn {
     background-color: rgb(74, 103, 146);
+    float: left;
     left: 10%;
     border: 6px solid rgb(0, 46, 48);
 }
 
-section#doc-section > button {
+section#arena-section > .wrapper > .btn {
     background-color: rgb(74, 103, 146);
-    left: 10%;
-    border: 6px solid rgb(0, 46, 48);
-}
-
-section#arena-section > button {
-    background-color: rgb(74, 103, 146);
+    float: right;
     right: 10%;
     border: 6px solid rgb(0, 46, 48);
 }
 
-section > button > div {
+
+.btn > div {
     display: block;
     height: 40%;
     width: 100%;

@@ -40,6 +40,13 @@ app.use('/signup', (req, res) => {
       response.token = token
     })
 
+    // Default role of user is non admin
+    fileStorage.admin.auth().getUserByEmail(email).then(user => {
+      fileStorage.admin.auth().setCustomUserClaims(user.uid, {
+        admin: false
+      })
+    })
+
     cred.user.updateProfile({
       displayName: username
     }).then(function() {
@@ -80,6 +87,41 @@ app.use('/login', (req, res) => {
     console.log(error.message)
     res.send({error:"fail"})
   })
+});
+
+app.use('/make-admin', (req, res) => {
+  const email = req.body.email
+
+  fileStorage.admin.auth().getUserByEmail(email).then(user => {
+    fileStorage.admin.auth().setCustomUserClaims(user.uid, {
+      admin: true
+    })
+  }).then(() => {
+    res.send("Success! " + email + " is now an admin")
+  })
+});
+
+app.use('/make-unadmin', (req, res) => {
+  const email = req.body.email
+
+  fileStorage.admin.auth().getUserByEmail(email).then(user => {
+    fileStorage.admin.auth().setCustomUserClaims(user.uid, {
+      admin: false
+    })
+  }).then(() => {
+    res.send("Success! " + email + " is no longer an admin")
+  })
+});
+
+app.use('/is-admin', (req, res) => {
+  const email = req.body.email
+
+  fileStorage.admin.auth().getUserByEmail(email).then(user => {
+    fileStorage.admin.auth().getUser(user.uid).then((userData) => {
+      console.log(userData.customClaims['admin'])
+      res.send(userData.customClaims['admin'])
+    })
+  });
 });
 
 // Fetch all files related to a user
