@@ -49,11 +49,23 @@ app.use('/signup', (req, res) => {
   const username = req.body.username
   const password = req.body.password
 
+  var response = {
+    token: "",
+    username: ""
+  }
+
+  response.username = username
+
   db.auth.createUserWithEmailAndPassword(email, password).then(cred => {
+    cred.user.getIdTokenResult().then((token) => {
+      response.token = token
+    })
+
     cred.user.updateProfile({
       displayName: username
     }).then(function() {
-      res.send('Success');
+      // console.log(cred.user)
+      res.send(response);
     }, function(error) {
       res.send('Fail on username change');
     })
@@ -72,11 +84,21 @@ app.use('/login-dev', (req, res) => {
   const email = req.body.email
   const password = req.body.password
 
+  var response = {
+    token: "",
+    username: ""
+  }
+
   db.auth.signInWithEmailAndPassword(email, password).then(cred => {
     cred.user.getIdTokenResult().then((token) => {
-      res.send(token)
+      response.token = token
     })
+    response.username = cred.user.displayName
+
+    res.send(response)
+  
   }, function(error) {
+
     console.log(error.message)
     res.send('fail')
   })
