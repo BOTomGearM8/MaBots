@@ -18,16 +18,21 @@ async function loginUser(credentials) {
 export default function Login(props) {
   const [username, setUserName] = useState();
   const [password, setPassword] = useState();
+  const [email, setEmail] = useState();
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const token = await loginUser({
-      username,
+    const resp = await loginUser({
+      email,
       password
     });
-    console.log(token);
-    props.setToken(token, username);
-    props.loginSubmitted();
+    console.log(resp);
+    if (resp.error === "fail") {
+      alert("User or password incorrect");
+    } else {
+      props.setToken(resp.token, resp.username);
+      props.loginSubmitted();
+    }
   }
 
   return(
@@ -36,8 +41,8 @@ export default function Login(props) {
       <h1 id="login-h1">Please Log In</h1>
       <form className="login-form" onSubmit={handleSubmit}>
         <label>
-          <p>Username</p>
-          <input className = "login-input" type="text" onChange={e => setUserName(e.target.value)}/>
+          <p>E-mail</p>
+          <input className = "login-input" type="text" onChange={e => setEmail(e.target.value)}/>
         </label>
         <label>
           <p>Password</p>

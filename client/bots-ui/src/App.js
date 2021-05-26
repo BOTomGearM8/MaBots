@@ -7,6 +7,17 @@ import Login from './Login';
 import Profile from './Profile';
 import CreateAccount from './CreateAccount';
 
+
+async function logoutUser() {
+  return fetch('http://localhost:8080/logout', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+  })
+    .then(data => data.json())
+}
+
 function App() {
   const { token, setToken, deleteToken } = useToken();
   const [headerState, setHeaderState] = useState('start');
@@ -18,6 +29,7 @@ function App() {
 
   let doLogout = () => {
     setHeaderState('start');
+    let res = logoutUser();
     deleteToken(token);
   }
 
@@ -50,7 +62,8 @@ function App() {
                                              setHeaderState = {setHeaderState}/>}
       {headerState === 'loginClicked' && <Login setToken={setToken}
                                                 loginSubmitted = {loginSubmitted} ><a href="login-start"></a></Login>}
-      {headerState === 'registerClicked' && <CreateAccount setToken={setToken}></CreateAccount>}
+      {headerState === 'registerClicked' && <CreateAccount setToken={setToken} 
+                                                            loginSubmitted = {loginSubmitted}></CreateAccount>}
       {headerState === 'profileClicked' && <Profile setToken={setToken}></Profile>}
 
       <footer> &copy; BottomGear 2021 </footer>

@@ -70,38 +70,38 @@ export default function Arena() {
     let cellToSprite = (cell) => {
         if (cell.hq == 1) {
             if (cell.faction == 1)
-                return  <Sprite data = {{x:256, y:64, h:32, w:32}} 
+                return  <Sprite data = {{x:224, y:64, h:32, w:32}} 
                 image = '/sprites/grasslands_2.png' 
-                position = {{x:cell.x*60, y:cell.y*60}} 
+                position = {{x:cell.y*60, y:cell.x*60}} 
                 number = {cell.no_soldiers}
                 scale = {generalScale*1.2}
                 />
             else if (cell.faction == 2)
-                return  <Sprite data = {{x:224, y:64, h:32, w:32}} 
+                return  <Sprite data = {{x:256, y:64, h:32, w:32}} 
                 image = '/sprites/grasslands_2.png' 
-                position = {{x:cell.x*60, y:cell.y*60}} 
+                position = {{x:cell.y*60, y:cell.x*60}} 
                 number = {cell.no_soldiers}
                 scale = {generalScale*1.2}
                 />
         } else if (cell.tower == 1) {
             if (cell.faction == 1)
-                return  <Sprite data = {{x:160, y:64, h:32, w:32}} 
+                return  <Sprite data = {{x:128, y:64, h:32, w:32}} 
                 image = '/sprites/grasslands_2.png' 
-                position = {{x:cell.x*60, y:cell.y*60}} 
+                position = {{x:cell.y*60, y:cell.x*60}} 
                 number = {cell.no_soldiers}
                 scale = {generalScale*1.2}
                 />
             else if (cell.faction == 2)
-                return  <Sprite data = {{x:128, y:64, h:32, w:32}} 
+                return  <Sprite data = {{x:160, y:64, h:32, w:32}} 
                 image = '/sprites/grasslands_2.png' 
-                position = {{x:cell.x*60, y:cell.y*60}} 
+                position = {{x:cell.y*60, y:cell.x*60}} 
                 number = {cell.no_soldiers}
                 scale = {generalScale*1.2}
                 />
             else
                 return  <Sprite data = {{x:194, y:64, h:32, w:32}} 
                 image = '/sprites/grasslands_2.png' 
-                position = {{x:cell.x*60, y:cell.y*60}} 
+                position = {{x:cell.y*60, y:cell.x*60}} 
                 number = {cell.no_soldiers}
                 scale = {generalScale*1.2}
                 />
@@ -110,14 +110,14 @@ export default function Arena() {
         if (cell.faction == 1)
             return  <Sprite data = {{x:0, y:0, h:32, w:32}} 
             image = '/sprites/m1.png' 
-            position = {{x:cell.x*60, y:cell.y*60}} 
+            position = {{x:cell.y*60, y:cell.x*60}} 
             number = {cell.no_soldiers}
             scale = {generalScale*1}
             />
         else if (cell.faction == 2)
             return  <Sprite data = {{x:0, y:0, h:32, w:32}} 
             image = '/sprites/m2.png' 
-            position = {{x:cell.x*60, y:cell.y*60}} 
+            position = {{x:cell.y*60, y:cell.x*60}} 
             number = {cell.no_soldiers}
             scale = {generalScale*1}
             />
@@ -129,7 +129,7 @@ export default function Arena() {
     let cellToBackground = (cell) => {
         return  <Sprite data = {{x:0, y:64, h:32, w:32}} 
         image = '/sprites/grasslands_2.png' 
-        position = {{x:cell.x*60, y:cell.y*60}}
+        position = {{x:cell.y*60, y:cell.x*60}}
         scale = {generalScale*2} 
         />
     }

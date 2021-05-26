@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './CreateAccount.css';
 
 async function createUser(userData) {
-    return fetch('http://localhost:8080/create-account', {
+    return fetch('http://localhost:8080/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -14,20 +14,24 @@ async function createUser(userData) {
       .then(data => data.json())
 }
 
-export default function CreateAccount({ setToken }) {
+export default function CreateAccount({ setToken, loginSubmitted }) {
   const [username, setUserName] = useState();
+  const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [passwordConfirmation, setPasswordConfirmation] = useState();
 
   const handleSubmit = async e => {
     e.preventDefault();
     if (password === passwordConfirmation) {
-      const token = await createUser({
+      const resp = await createUser({
+        email,
         username,
-        password,
-        passwordConfirmation
+        password
       });
-      setToken(token, username);
+      
+      setToken(resp.token, resp.username);
+      loginSubmitted();
+
     } else {
       alert("Password doesn't match confirmation");
     }
@@ -40,6 +44,10 @@ export default function CreateAccount({ setToken }) {
         <label>
           <p>Username</p>
           <input className = "sign-input" type="text" onChange={e => setUserName(e.target.value)}/>
+        </label>
+        <label>
+          <p>E-mail</p>
+          <input className = "sign-input" type="text" onChange={e => setEmail(e.target.value)}/>
         </label>
         <label>
           <p>Password</p>
