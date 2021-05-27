@@ -1,3 +1,6 @@
+const functions = require('firebase-functions');
+
+
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -257,5 +260,6 @@ app.post('/play', async (req, res) => {
   res.send(game.engine());
 });
 
-// http://localhost:8080/     -- dev purpose
-app.listen(8080, () => console.log('API is running on http://localhost:8080/'));
+
+//app.listen(8080, () => console.log('API is running on http://localhost:8080/'));
+exports.api = functions.https.onRequest(app);

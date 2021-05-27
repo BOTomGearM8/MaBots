@@ -35,6 +35,16 @@ td {
     align-content: center;
 }
 
+.non-admin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bot-name {
+    color: rgb(74, 103, 146);
+}
+
 .game-wrapper > h1 {
     position: absolute;
     top: 53vh;

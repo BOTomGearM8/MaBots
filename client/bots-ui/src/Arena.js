@@ -25,18 +25,56 @@ async function playGame() {
     return res.data;
 }
 
+async function isAdmin(email) {
+    return fetch('http://localhost:8080/is-admin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(email)
+    })
+      .then(data => data.json())
+}
+
+async function fetchBot(user) {
+    var res = await axios({
+      method: 'post',
+      url: 'http://localhost:8080/fetchUserFiles',
+      data: JSON.stringify({user : user}),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    console.log(res.data.file);
+
+    return res.data.file;
+}
+
 export default function Arena() {
     const [player1, setPlayer1] = useState();
     const [player2, setPlayer2] = useState();
     const [fightStarted, setFightStarted] = useState(false);
     const [simulationStarted, setSimulationStarted] = useState(false);
+
     const [stateIdx, setStateIdx] = useState(0);
     const [gameStates, setGameStates] = useState();
     const [winner, setWinner] = useState();
     const [boards, setBoards] = useState();
     const [tileMap, setTileMap] = useState();
     const [tileSize, setTileSize] = useState(0);
+
+    const [admin, setAdmin] = useState(true);
+    const [botName, setBotName] = useState();
+    const [isLoading, setLoading] = useState(true);
     const generalScale = 1;
+
+    const tokenString = window.sessionStorage.getItem('token');
+    const userToken = JSON.parse(tokenString);
+    const email = userToken.claims.email;
+
+    const mapString = window.sessionStorage.getItem('tokenMap');
+    const map = JSON.parse(mapString);
+    const user = map[userToken.token];
+    console.log(user);
 
     let handleSubmit = () => {
         setFightStarted(true);
@@ -177,29 +215,53 @@ export default function Arena() {
         previousTimeRef.current = time;
         requestRef.current = requestAnimationFrame(animate);
       }
-  
+    
+    useEffect(() => {
+        isAdmin({email}).then(res =>
+            {
+                console.log(res);
+                setAdmin(res);
+            });
+        fetchBot(user).then(res =>
+            {
+                setBotName(res);
+                setLoading(false);
+            });
+    }, []);
+    
 
     return(
         <section id = "Arena">
             <div className = "wrapper">
                 <h2> Arena </h2>
-                {!fightStarted ? <div className = "form-wrapper">
-                    <form className = "form-fight" onSubmit={handleSubmit}>
-                        <label>
-                        <p>Player 1</p>
-                        <input className = "bot-input" type="text" 
-                                placeholder="Bot Name" onChange = {e => setPlayer1(e.target.value)}/>
-                        </label>
-                        <label>
-                        <p>Player 2</p>
-                        <input className = "bot-input" type="text" 
-                            placeholder="Bot Name" onChange = {e => setPlayer2(e.target.value)}/>
-                        </label>
-                        <div>
-                        <button className = "fight-button"  type="submit">Fight</button>
-                        </div>
-                    </form>
-                </div> : 
+                {!fightStarted ? 
+                    (admin ?
+                    <div className = "form-wrapper">
+                        <form className = "form-fight" onSubmit={handleSubmit}>
+                            <label>
+                            <p>Player 1</p>
+                            <input className = "bot-input" type="text" 
+                                    placeholder="Bot Name" onChange = {e => setPlayer1(e.target.value)}/>
+                            </label>
+                            <label>
+                            <p>Player 2</p>
+                            <input className = "bot-input" type="text" 
+                                placeholder="Bot Name" onChange = {e => setPlayer2(e.target.value)}/>
+                            </label>
+                            <div>
+                            <button className = "fight-button"  type="submit">Fight</button>
+                            </div>
+                        </form>
+                    </div> : 
+                    <div className = "non-admin">
+                        <h3>Send your bot to battle the default opponent!</h3>
+                        {isLoading ? <p> No bot added.. </p> : 
+                                    <div>
+                                        <h3 className="bot-name"> {botName} </h3>
+                                        <button className = "fight-button" onClick = {handleSubmit}> Send to Battle </button>
+                                    </div>}
+                    </div>)
+                : 
                     <div className="game-wrapper">
                         {!simulationStarted ? <button className = "sim-button" onClick = {handleOnClick}> <PlayCircleOutlined className = "play" /> 
                                                                                                         <p> Start Simulation </p> </button> :
