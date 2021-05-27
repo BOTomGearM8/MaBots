@@ -257,5 +257,5 @@ app.post('/play', async (req, res) => {
   res.send(game.engine());
 });
 
-
+// http://localhost:8080/     -- dev purpose
 app.listen(8080, () => console.log('API is running on http://localhost:8080/'));
