@@ -62,18 +62,18 @@ export default function Arena() {
     const [tileMap, setTileMap] = useState();
     const [tileSize, setTileSize] = useState(0);
 
-    const [admin, setAdmin] = useState(true);
+    const [admin, setAdmin] = useState(false);
     const [botName, setBotName] = useState();
     const [isLoading, setLoading] = useState(true);
     const generalScale = 1;
 
     const tokenString = window.sessionStorage.getItem('token');
     const userToken = JSON.parse(tokenString);
-    const email = userToken.claims.email;
+    const email = (userToken&&userToken.claims) ? userToken.claims.email : null;
 
     const mapString = window.sessionStorage.getItem('tokenMap');
     const map = JSON.parse(mapString);
-    const user = map[userToken.token];
+    const user =  userToken ? map[userToken.token] : null;
     console.log(user);
 
     let handleSubmit = () => {
@@ -217,12 +217,14 @@ export default function Arena() {
       }
     
     useEffect(() => {
-        isAdmin({email}).then(res =>
+        if (email)
+            isAdmin({email}).then(res =>
             {
                 console.log(res);
                 setAdmin(res);
             });
-        fetchBot(user).then(res =>
+        if (user)
+            fetchBot(user).then(res =>
             {
                 setBotName(res);
                 setLoading(false);
@@ -235,7 +237,7 @@ export default function Arena() {
             <div className = "wrapper">
                 <h2> Arena </h2>
                 {!fightStarted ? 
-                    (admin ?
+                    (userToken ? (admin ?
                     <div className = "form-wrapper">
                         <form className = "form-fight" onSubmit={handleSubmit}>
                             <label>
@@ -260,7 +262,7 @@ export default function Arena() {
                                         <h3 className="bot-name"> {botName} </h3>
                                         <button className = "fight-button" onClick = {handleSubmit}> Send to Battle </button>
                                     </div>}
-                    </div>)
+                    </div>) : <div className = "non-admin"><p> Login to have a bot </p></div>) 
                 : 
                     <div className="game-wrapper">
                         {!simulationStarted ? <button className = "sim-button" onClick = {handleOnClick}> <PlayCircleOutlined className = "play" /> 

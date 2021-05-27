@@ -118,8 +118,11 @@ app.use('/is-admin', (req, res) => {
 
   fileStorage.admin.auth().getUserByEmail(email).then(user => {
     fileStorage.admin.auth().getUser(user.uid).then((userData) => {
-      console.log(userData.customClaims['admin'])
-      res.send(userData.customClaims['admin'])
+      //console.log(userData.customClaims['admin'])
+      if (user.customClaims)
+        res.send(userData.customClaims['admin'])
+      else
+        res.send(false);
     })
   });
 });
