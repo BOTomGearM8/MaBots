@@ -10,7 +10,7 @@ export default function Documentation() {
                 <div className="doc-tile" id="the-game">
                     <h3>The Game</h3>
                     <p>The game is represented by a 5x5 board with multiple types of cells.</p>
-                    <p>This cells can be:</p>
+                    <p>These cells can be:</p>
                     <ul>
                         <li><strong>HQ</strong>: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;The base of the player. Can spawn soldiers. When captured the game is lost.</li>
                         <li><strong>Tower:</strong> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;A fortification on the map than when captured also the controling player to spawn soldiers inside of it, giving him the advantage of having new soldiers closer to the battlefield.<br/>Initialy the towers will be controled by NPCs, which the players need to kill before capturing the fortification.</li>
@@ -29,7 +29,7 @@ export default function Documentation() {
 
                 <div className="doc-tile" id="the-goal">
                     <h3>The Goal</h3>
-                    <p>The goal of the game is to either take the enemys HQ or to have 2 towers more than your opponet.</p>
+                    <p>The goal of the game is to either take the enemys HQ or to have 2 towers more than your opponent.</p>
                     <p>In order for you to do this you need to strategically move and create soldiers so that you can</p>
                     <p>capture the towers onthe map or the base of your enemy.</p>
                     <p>&nbsp; &nbsp; Tower capturing:</p>
@@ -61,12 +61,12 @@ export default function Documentation() {
                     </ol>
                     <br/>
                     <p>1. skel.js</p>
-                    <p>This files contains classes that you need to use in development:</p>
+                    <p>This file contains classes that you need to use in development:</p>
                     <ul>
-                        <li>Action: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;Defines one of the 2 actions inside a turn</li>
-                        <li>RoundActions: &nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;Defines the 2 actions that a payer makes in a round. This also the format that you need to give your actions to the engine for processing.</li>
-                        <li>PrintWithColors: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;Used to print data acording to player fortification</li>
-                        <li>GridCell: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;Holds all the information of a board cell</li>
+                        <li><b>Action:</b> &nbsp;&nbsp;Defines one of the 2 actions inside a turn</li>
+                        <li><b>RoundActions:</b> &nbsp;&nbsp;Defines the 2 actions that a payer makes in a round. This also the format that you need to give your actions to the engine for processing.</li>
+                        <li><b>PrintWithColors:</b> &nbsp;&nbsp;Used to print data acording to player fortification</li>
+                        <li><b>GridCell:</b> &nbsp;&nbsp;Holds all the information of a board cell</li>
                     </ul>
                     <p>&nbsp;</p>
                     <p>2. MaBot.js</p>
@@ -78,6 +78,10 @@ export default function Documentation() {
                     <p>Good luck in the arena, and may the best bot win!</p>
                     <p><br/></p>
                 </div>
+            </div>
+
+            <div className="wrapper">
+                <a href="/MaBot.zip" download>Download</a>
             </div>
         </section>
     );

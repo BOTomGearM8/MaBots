@@ -40,6 +40,8 @@ section > .wrapper > p#motto {
     position: relative;
     border-radius: 5%;
     margin-bottom: 10%;
+    box-shadow: 15px 15px 1px teal;
+    background-color: rgb(74, 103, 146);
 }
 
 .book {
@@ -58,17 +60,13 @@ section > .wrapper > p#motto {
 }
 
 section#doc-section > .wrapper > .btn {
-    background-color: rgb(74, 103, 146);
     float: left;
-    left: 10%;
-    border: 6px solid rgb(0, 46, 48);
+    left: 8%;
 }
 
 section#arena-section > .wrapper > .btn {
-    background-color: rgb(74, 103, 146);
     float: right;
-    right: 10%;
-    border: 6px solid rgb(0, 46, 48);
+    right: 8%;
 }
 
 
