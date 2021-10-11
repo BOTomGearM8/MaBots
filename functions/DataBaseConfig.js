@@ -1,7 +1,7 @@
 const firebase = require('firebase')
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAVa8jpyTBu4sy36kPXd1G2H_2MGEv92Ms",
+  apiKey: "**************************", // ask for key
   authDomain: "mabots-cb557.firebaseapp.com",
   databaseURL: "https://mabots-cb557-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "mabots-cb557",
